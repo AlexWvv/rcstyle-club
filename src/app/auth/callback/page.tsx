@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSupabaseBrowserClient } from '@/lib/supabase/client';
+import { getSupabaseBrowserClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 
 export default function AuthCallbackPage() {
@@ -11,6 +11,18 @@ export default function AuthCallbackPage() {
   const supabase = getSupabaseBrowserClient();
   
   useEffect(() => {
+    // 如果 Supabase 未配置，直接跳转到首页
+    if (!isSupabaseConfigured()) {
+      setError('Supabase 未配置，请先完成配置');
+      setTimeout(() => router.push('/'), 2000);
+      return;
+    }
+    
+    if (!supabase) {
+      setError('认证服务不可用');
+      return;
+    }
+    
     const handleCallback = async () => {
       try {
         const { error } = await supabase.auth.getSession();
@@ -28,7 +40,7 @@ export default function AuthCallbackPage() {
     };
     
     handleCallback();
-  }, [router, supabase.auth]);
+  }, [router, supabase]);
   
   if (error) {
     return (
