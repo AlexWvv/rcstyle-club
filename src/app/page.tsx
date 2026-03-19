@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +8,16 @@ import { Button } from '@/components/ui/button';
 import { 
   Car, Radio, Zap, Settings, Battery, Plug, Lightbulb, Circle,
   ExternalLink, Newspaper, Calendar, Eye, ArrowRight, Search,
-  Youtube, Flame, RefreshCw, TrendingUp
+  Youtube, Flame, RefreshCw, TrendingUp, MessageCircle
 } from 'lucide-react';
-import { categories, vloggers } from '@/data/rc-resources';
-import { getLatestNews, formatDate, formatViews } from '@/data/news';
+import { categories, vloggers, getBrandsCount } from '@/data/rc-resources';
+import { getLatestNews, formatDate, formatViews, getNewsCount } from '@/data/news';
+import { getModelsCount, getManualsCount } from '@/data/models';
 import { useTranslation } from '@/lib/i18n/context';
 import { Header } from '@/components/Header';
 import { SearchModal } from '@/components/SearchModal';
+import { SeoKeywords } from '@/components/SeoKeywords';
+import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { useAnalytics } from '@/lib/analytics';
 
 // 图标映射
@@ -46,22 +49,29 @@ export default function Home() {
   const { trackBrandClick } = useAnalytics();
   const [searchOpen, setSearchOpen] = useState(false);
 
-  // 统计数据
+  // 统计数据（从数据源获取真实数量）
   const stats = useMemo(() => {
-    let totalBrands = 0;
+    let totalBrands = getBrandsCount();
     let domesticBrands = 0;
     let overseasBrands = 0;
     
     categories.forEach(cat => {
       cat.brands.forEach(brand => {
-        totalBrands++;
         const isDomestic = brand.country === '中国' || brand.country === '中国台湾' || brand.country === '中国香港';
         if (isDomestic) domesticBrands++;
         else overseasBrands++;
       });
     });
     
-    return { totalBrands, domesticBrands, overseasBrands };
+    return { 
+      totalBrands, 
+      domesticBrands, 
+      overseasBrands,
+      vloggersCount: vloggers.length,
+      modelsCount: getModelsCount(),
+      manualsCount: getManualsCount(),
+      newsCount: getNewsCount()
+    };
   }, []);
 
   return (
@@ -99,18 +109,30 @@ export default function Home() {
           </div>
           
           {/* 统计数据 */}
-          <div className="flex justify-center gap-8 text-sm">
-            <div>
-              <span className="text-2xl font-bold text-white">{stats.totalBrands}+</span>
+          <div className="flex justify-center gap-6 md:gap-8 text-sm flex-wrap">
+            <div className="group cursor-default">
+              <span className="text-2xl font-bold text-white group-hover:text-orange-400 transition-colors">
+                <AnimatedCounter end={stats.totalBrands} suffix="+" duration={1500} />
+              </span>
               <span className="text-slate-500 ml-1">{language === 'zh' ? '品牌' : 'Brands'}</span>
             </div>
-            <div>
-              <span className="text-2xl font-bold text-white">{vloggers.length}+</span>
+            <div className="group cursor-default">
+              <span className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                <AnimatedCounter end={stats.vloggersCount} suffix="+" duration={1500} />
+              </span>
               <span className="text-slate-500 ml-1">{language === 'zh' ? '博主' : 'Vloggers'}</span>
             </div>
-            <div>
-              <span className="text-2xl font-bold text-white">50+</span>
+            <div className="group cursor-default">
+              <span className="text-2xl font-bold text-white group-hover:text-green-400 transition-colors">
+                <AnimatedCounter end={stats.manualsCount} suffix="+" duration={1500} />
+              </span>
               <span className="text-slate-500 ml-1">{language === 'zh' ? '说明书' : 'Manuals'}</span>
+            </div>
+            <div className="group cursor-default">
+              <span className="text-2xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                <AnimatedCounter end={stats.newsCount} suffix="+" duration={1500} />
+              </span>
+              <span className="text-slate-500 ml-1">{language === 'zh' ? '资讯' : 'News'}</span>
             </div>
           </div>
         </section>
@@ -398,12 +420,36 @@ export default function Home() {
           </Card>
         </section>
 
+        {/* SEO关键词 */}
+        <SeoKeywords type="home" className="mt-8" />
+
         {/* 底部 */}
         <footer className="border-t border-slate-800 pt-6 text-center">
           <p className="text-slate-500 text-sm mb-1">{t('home.footerDesc')}</p>
-          <p className="text-xs text-slate-600">{t('home.footerNote')}</p>
+          <p className="text-xs text-slate-600 mb-4">{t('home.footerNote')}</p>
+          
+          {/* 联系方式 */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-full mb-4">
+            <MessageCircle className="w-4 h-4 text-green-400" />
+            <span className="text-slate-400 text-sm">
+              {language === 'zh' ? '联系我们' : 'Contact'}：
+            </span>
+            <span className="text-green-400 font-medium text-sm">WeChat: vvbobobo</span>
+          </div>
+          
+          <p className="text-xs text-slate-700">© {new Date().getFullYear()} Rcstyle.club</p>
         </footer>
       </main>
+      
+      {/* 右下角固定联系按钮 */}
+      <a
+        href="weixin://"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg shadow-green-500/30 transition-all hover:scale-105"
+        title="微信联系"
+      >
+        <MessageCircle className="w-5 h-5" />
+        <span className="text-sm font-medium hidden sm:inline">vvbobobo</span>
+      </a>
     </div>
   );
 }

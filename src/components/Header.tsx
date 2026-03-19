@@ -1,16 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { SearchModal } from '@/components/SearchModal';
 import { useTranslation } from '@/lib/i18n/context';
+import { getNewsCount } from '@/data/news';
+import { getBrandsCount } from '@/data/rc-resources';
+import { getModelsCount } from '@/data/models';
 import { Newspaper, Menu, X, Car, Store } from 'lucide-react';
 
 export function Header() {
   const { t, language } = useTranslation();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [newsCount, setNewsCount] = useState(0);
+  const [brandsCount, setBrandsCount] = useState(0);
+  const [modelsCount, setModelsCount] = useState(0);
+  
+  // 获取统计数据
+  useEffect(() => {
+    setNewsCount(getNewsCount());
+    setBrandsCount(getBrandsCount());
+    setModelsCount(getModelsCount());
+  }, []);
   
   return (
     <>
@@ -30,6 +43,11 @@ export function Header() {
             >
               <Car className="w-4 h-4" />
               <span>{language === 'zh' ? '车型库' : 'Models'}</span>
+              {modelsCount > 0 && (
+                <span className="ml-0.5 px-1.5 py-0.5 text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded-full">
+                  {modelsCount}
+                </span>
+              )}
             </Link>
             
             {/* 品牌导航链接 */}
@@ -39,6 +57,11 @@ export function Header() {
             >
               <Store className="w-4 h-4" />
               <span>{language === 'zh' ? '品牌' : 'Brands'}</span>
+              {brandsCount > 0 && (
+                <span className="ml-0.5 px-1.5 py-0.5 text-[10px] font-medium bg-green-500/20 text-green-400 rounded-full">
+                  {brandsCount}
+                </span>
+              )}
             </Link>
             
             {/* 资讯链接 */}
@@ -48,6 +71,11 @@ export function Header() {
             >
               <Newspaper className="w-4 h-4" />
               <span>{t('nav.news')}</span>
+              {newsCount > 0 && (
+                <span className="ml-0.5 px-1.5 py-0.5 text-[10px] font-medium bg-orange-500/20 text-orange-400 rounded-full">
+                  {newsCount}
+                </span>
+              )}
             </Link>
             
             {/* 分隔线 */}
@@ -80,6 +108,11 @@ export function Header() {
               >
                 <Car className="w-5 h-5" />
                 <span>{language === 'zh' ? '车型库' : 'Models'}</span>
+                {modelsCount > 0 && (
+                  <span className="ml-auto px-1.5 py-0.5 text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded-full">
+                    {modelsCount}
+                  </span>
+                )}
               </Link>
               <Link 
                 href="/brands" 
@@ -88,6 +121,11 @@ export function Header() {
               >
                 <Store className="w-5 h-5" />
                 <span>{language === 'zh' ? '品牌' : 'Brands'}</span>
+                {brandsCount > 0 && (
+                  <span className="ml-auto px-1.5 py-0.5 text-[10px] font-medium bg-green-500/20 text-green-400 rounded-full">
+                    {brandsCount}
+                  </span>
+                )}
               </Link>
               <Link 
                 href="/news" 
@@ -96,6 +134,11 @@ export function Header() {
               >
                 <Newspaper className="w-5 h-5" />
                 <span>{t('nav.news')}</span>
+                {newsCount > 0 && (
+                  <span className="ml-auto px-1.5 py-0.5 text-[10px] font-medium bg-orange-500/20 text-orange-400 rounded-full">
+                    {newsCount}
+                  </span>
+                )}
               </Link>
               <div className="flex items-center justify-between px-4 py-3">
                 <span className="text-slate-400">{language === 'zh' ? '语言' : 'Language'}</span>

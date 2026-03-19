@@ -6,18 +6,23 @@ import path from 'path';
 // 资讯数据文件路径
 const NEWS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'news-generated.json');
 
-// 新闻源配置
+// 新闻源配置 - 搜索最近1周内容
 const NEWS_QUERIES = [
   // 国际新闻
   { query: 'RC car news Traxxas Arrma Axial', region: 'en', category: '新品发布', categoryEn: 'New Products' },
-  { query: 'RC model review 2024', region: 'en', category: '评测对比', categoryEn: 'Reviews' },
-  { query: 'RC racing competition 2024', region: 'en', category: '赛事活动', categoryEn: 'Events' },
+  { query: 'RC model review latest', region: 'en', category: '评测对比', categoryEn: 'Reviews' },
+  { query: 'RC racing competition', region: 'en', category: '赛事活动', categoryEn: 'Events' },
+  { query: 'RC crawler truck new release', region: 'en', category: '新品发布', categoryEn: 'New Products' },
   
   // 国内新闻
-  { query: 'RC遥控车 新品 评测', region: 'zh', category: '新品发布', categoryEn: 'New Products' },
-  { query: '攀爬车 越野车 RC模型', region: 'zh', category: '技术分享', categoryEn: 'Tutorials' },
-  { query: 'RC模型 行业动态', region: 'zh', category: '行业动态', categoryEn: 'Industry News' },
+  { query: 'RC遥控车 新品 发布', region: 'zh', category: '新品发布', categoryEn: 'New Products' },
+  { query: '攀爬车 越野车 评测', region: 'zh', category: '评测对比', categoryEn: 'Reviews' },
+  { query: 'RC模型 行业动态 新闻', region: 'zh', category: '行业动态', categoryEn: 'Industry News' },
+  { query: '遥控车 比赛 活动', region: 'zh', category: '赛事活动', categoryEn: 'Events' },
 ];
+
+// 时间范围：1周
+const TIME_RANGE = '1w';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,25 +31,34 @@ export async function POST(request: NextRequest) {
     const client = new SearchClient(config, customHeaders);
     
     const body = await request.json().catch(() => ({}));
-    const { query, count = 10 } = body;
+    const { query, count = 10, timeRange = TIME_RANGE } = body;
     
     let allArticles: any[] = [];
     
     if (query) {
-      // 单独查询模式
-      const response = await client.webSearch(query, count, true);
+      // 单独查询模式 - 使用时间过滤
+      const response = await client.advancedSearch(query, {
+        count,
+        needSummary: true,
+        timeRange,
+      });
       allArticles = parseSearchResults(response, query);
     } else {
-      // 批量抓取模式
+      // 批量抓取模式 - 每个查询都使用时间过滤
       for (const newsQuery of NEWS_QUERIES) {
         try {
-          const response = await client.webSearch(
-            newsQuery.query, 
-            5, 
-            true
-          );
+          const response = await client.advancedSearch(newsQuery.query, {
+            count: 5,
+            needSummary: true,
+            timeRange,
+          });
           const articles = parseSearchResults(response, newsQuery.query, newsQuery.category, newsQuery.categoryEn);
-          allArticles = [...allArticles, ...articles];
+          
+          // 过滤：只保留发布时间在1周内的文章
+          const filteredArticles = filterByDate(articles, 7);
+          allArticles = [...allArticles, ...filteredArticles];
+          
+          console.log(`[${newsQuery.category}] 搜索: "${newsQuery.query}", 获取: ${articles.length} 条, 过滤后: ${filteredArticles.length} 条`);
         } catch (error) {
           console.error(`Error fetching ${newsQuery.query}:`, error);
         }
@@ -63,6 +77,7 @@ export async function POST(request: NextRequest) {
       success: true,
       fetched: allArticles.length,
       saved: uniqueArticles.length,
+      timeRange: timeRange,
       articles: uniqueArticles.slice(0, 10),
     });
     
@@ -81,25 +96,64 @@ function parseSearchResults(response: any, query: string, category = '行业动�
     return [];
   }
   
-  return response.web_items.map((item: any, index: number) => ({
-    id: `news-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: item.title || '',
-    titleEn: item.title || '',
-    summary: item.snippet || item.summary || '',
-    summaryEn: item.snippet || item.summary || '',
-    content: item.content || item.snippet || '',
-    contentEn: item.content || item.snippet || '',
-    coverImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop',
-    category: category,
-    categoryEn: categoryEn,
-    author: item.site_name || 'RCstyle编辑',
-    authorEn: item.site_name || 'RCstyle Editor',
-    publishDate: item.publish_time || new Date().toISOString().split('T')[0],
-    views: Math.floor(Math.random() * 10000) + 1000,
-    tags: extractTags(item.title + ' ' + item.snippet),
-    isNew: true,
-    originalUrl: item.url,
-  }));
+  return response.web_items.map((item: any) => {
+    // 解析发布时间
+    const publishDate = parsePublishDate(item.publish_time);
+    
+    return {
+      id: `news-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      title: item.title || '',
+      titleEn: item.title || '',
+      summary: item.snippet || item.summary || '',
+      summaryEn: item.snippet || item.summary || '',
+      content: item.content || item.snippet || '',
+      contentEn: item.content || item.snippet || '',
+      coverImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop',
+      category: category,
+      categoryEn: categoryEn,
+      author: item.site_name || 'RCstyle编辑',
+      authorEn: item.site_name || 'RCstyle Editor',
+      publishDate: publishDate,
+      views: Math.floor(Math.random() * 10000) + 1000,
+      tags: extractTags(item.title + ' ' + item.snippet),
+      isNew: true,
+      originalUrl: item.url,
+    };
+  });
+}
+
+// 解析发布日期
+function parsePublishDate(publishTime: string | undefined): string {
+  if (!publishTime) {
+    return new Date().toISOString().split('T')[0];
+  }
+  
+  try {
+    // 尝试解析各种日期格式
+    const date = new Date(publishTime);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0];
+    }
+  } catch {
+    // 解析失败，使用当前日期
+  }
+  
+  return new Date().toISOString().split('T')[0];
+}
+
+// 按日期过滤 - 只保留指定天数内的文章
+function filterByDate(articles: any[], days: number): any[] {
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - days);
+  const cutoffStr = cutoffDate.toISOString().split('T')[0];
+  
+  return articles.filter(article => {
+    const articleDate = article.publishDate;
+    if (!articleDate) return true; // 没有日期的保留
+    
+    // 比较日期字符串（YYYY-MM-DD 格式可直接比较）
+    return articleDate >= cutoffStr;
+  });
 }
 
 // 提取标签
@@ -170,11 +224,16 @@ export async function GET(request: NextRequest) {
       // 文件不存在
     }
     
+    // 统计最近1周的文章数
+    const recentArticles = filterByDate(articles, 7);
+    
     return NextResponse.json({
       success: true,
       total: articles.length,
+      recentWeek: recentArticles.length,
       lastUpdate: articles.length > 0 ? articles[0].publishDate : null,
-      sources: NEWS_QUERIES.map(q => q.query),
+      timeRange: TIME_RANGE,
+      sources: NEWS_QUERIES.map(q => ({ query: q.query, category: q.category })),
     });
     
   } catch (error) {

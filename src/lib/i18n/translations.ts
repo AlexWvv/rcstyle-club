@@ -125,6 +125,85 @@ export const translations = {
       chargers: '充电器',
       accessories: '配件 / 工具',
     },
+    
+    // SEO关键词
+    seo: {
+      hotKeywords: '热门关键词',
+      relatedSearches: '相关搜索',
+      // 首页关键词
+      home: [
+        { text: 'RC遥控车', en: 'RC Remote Control Car' },
+        { text: '遥控车模型', en: 'RC Car Model' },
+        { text: '攀爬车', en: 'RC Crawler' },
+        { text: '越野车', en: 'RC Off-road' },
+        { text: '大脚车', en: 'Monster Truck' },
+        { text: 'HBX遥控车', en: 'HBX RC Car' },
+        { text: 'Traxxas', en: 'Traxxas' },
+        { text: 'Arrma', en: 'Arrma' },
+        { text: '入门遥控车推荐', en: 'Beginner RC Car Guide' },
+        { text: '遥控车哪个牌子好', en: 'Best RC Car Brands' },
+      ],
+      // 资讯页关键词
+      news: [
+        { text: 'RC资讯', en: 'RC News' },
+        { text: '遥控车测评', en: 'RC Car Review' },
+        { text: 'RC评测', en: 'RC Review' },
+        { text: '遥控车新品', en: 'New RC Cars' },
+        { text: 'RC赛事', en: 'RC Racing Events' },
+        { text: '遥控车比赛', en: 'RC Competition' },
+        { text: 'RC教程', en: 'RC Tutorial' },
+        { text: '遥控车改装', en: 'RC Car Modification' },
+        { text: 'Traxxas新闻', en: 'Traxxas News' },
+        { text: 'Arrma评测', en: 'Arrma Review' },
+      ],
+      // 品牌页关键词
+      brands: [
+        { text: 'RC品牌', en: 'RC Brands' },
+        { text: '遥控车品牌大全', en: 'RC Brand Directory' },
+        { text: 'HBX易控', en: 'HBX RC' },
+        { text: 'FMS模型', en: 'FMS Model' },
+        { text: '伟力遥控车', en: 'WLtoys RC' },
+        { text: '雷拉洛', en: 'Rlaarlo' },
+        { text: 'Axial攀爬车', en: 'Axial Crawler' },
+        { text: '好盈电调', en: 'Hobbywing ESC' },
+        { text: '国产遥控车品牌', en: 'Chinese RC Brands' },
+        { text: '进口遥控车品牌', en: 'Import RC Brands' },
+      ],
+      // 博主页关键词
+      vloggers: [
+        { text: 'RC博主', en: 'RC Vlogger' },
+        { text: '遥控车UP主', en: 'RC YouTuber' },
+        { text: '抖音RC博主', en: 'Douyin RC Creator' },
+        { text: 'B站遥控车', en: 'Bilibili RC' },
+        { text: 'RC测评', en: 'RC Review' },
+        { text: '遥控车视频', en: 'RC Car Video' },
+        { text: '攀爬车博主', en: 'Crawler Vlogger' },
+        { text: 'RC开箱', en: 'RC Unboxing' },
+        { text: '遥控车改装教程', en: 'RC Mod Tutorial' },
+        { text: 'RC博主推荐', en: 'RC Vlogger Recommendation' },
+      ],
+      // 车型库关键词
+      models: [
+        { text: 'RC车型库', en: 'RC Models Database' },
+        { text: '攀爬车推荐', en: 'Crawler Recommendation' },
+        { text: '越野车推荐', en: 'Off-road Recommendation' },
+        { text: '大脚车推荐', en: 'Monster Truck Guide' },
+        { text: '漂移车', en: 'Drift Car' },
+        { text: 'RC说明书下载', en: 'RC Manual Download' },
+        { text: '遥控车参数', en: 'RC Car Specs' },
+        { text: '1/10遥控车', en: '1/10 Scale RC' },
+        { text: '1/8遥控车', en: '1/8 Scale RC' },
+        { text: '入门遥控车', en: 'Entry Level RC' },
+      ],
+      // 关于页关键词
+      about: [
+        { text: 'Rcstyle.club', en: 'Rcstyle.club' },
+        { text: 'RC模型导航', en: 'RC Model Directory' },
+        { text: '遥控车资源', en: 'RC Resources' },
+        { text: 'RC爱好者', en: 'RC Enthusiast' },
+        { text: '遥控车玩家社区', en: 'RC Community' },
+      ],
+    },
   },
   
   // 英文翻译
@@ -250,6 +329,85 @@ export const translations = {
       batteries: 'Batteries',
       chargers: 'Chargers',
       accessories: 'Accessories & Tools',
+    },
+    
+    // SEO Keywords
+    seo: {
+      hotKeywords: 'Hot Keywords',
+      relatedSearches: 'Related Searches',
+      // Home page keywords
+      home: [
+        { text: 'RC Remote Control Car', en: 'RC Remote Control Car' },
+        { text: 'RC Car Model', en: 'RC Car Model' },
+        { text: 'RC Crawler', en: 'RC Crawler' },
+        { text: 'RC Off-road', en: 'RC Off-road' },
+        { text: 'Monster Truck', en: 'Monster Truck' },
+        { text: 'HBX RC Car', en: 'HBX RC Car' },
+        { text: 'Traxxas', en: 'Traxxas' },
+        { text: 'Arrma', en: 'Arrma' },
+        { text: 'Beginner RC Car Guide', en: 'Beginner RC Car Guide' },
+        { text: 'Best RC Car Brands', en: 'Best RC Car Brands' },
+      ],
+      // News page keywords
+      news: [
+        { text: 'RC News', en: 'RC News' },
+        { text: 'RC Car Review', en: 'RC Car Review' },
+        { text: 'RC Review', en: 'RC Review' },
+        { text: 'New RC Cars', en: 'New RC Cars' },
+        { text: 'RC Racing Events', en: 'RC Racing Events' },
+        { text: 'RC Competition', en: 'RC Competition' },
+        { text: 'RC Tutorial', en: 'RC Tutorial' },
+        { text: 'RC Car Modification', en: 'RC Car Modification' },
+        { text: 'Traxxas News', en: 'Traxxas News' },
+        { text: 'Arrma Review', en: 'Arrma Review' },
+      ],
+      // Brands page keywords
+      brands: [
+        { text: 'RC Brands', en: 'RC Brands' },
+        { text: 'RC Brand Directory', en: 'RC Brand Directory' },
+        { text: 'HBX RC', en: 'HBX RC' },
+        { text: 'FMS Model', en: 'FMS Model' },
+        { text: 'WLtoys RC', en: 'WLtoys RC' },
+        { text: 'Rlaarlo', en: 'Rlaarlo' },
+        { text: 'Axial Crawler', en: 'Axial Crawler' },
+        { text: 'Hobbywing ESC', en: 'Hobbywing ESC' },
+        { text: 'Chinese RC Brands', en: 'Chinese RC Brands' },
+        { text: 'Import RC Brands', en: 'Import RC Brands' },
+      ],
+      // Vloggers page keywords
+      vloggers: [
+        { text: 'RC Vlogger', en: 'RC Vlogger' },
+        { text: 'RC YouTuber', en: 'RC YouTuber' },
+        { text: 'Douyin RC Creator', en: 'Douyin RC Creator' },
+        { text: 'Bilibili RC', en: 'Bilibili RC' },
+        { text: 'RC Review', en: 'RC Review' },
+        { text: 'RC Car Video', en: 'RC Car Video' },
+        { text: 'Crawler Vlogger', en: 'Crawler Vlogger' },
+        { text: 'RC Unboxing', en: 'RC Unboxing' },
+        { text: 'RC Mod Tutorial', en: 'RC Mod Tutorial' },
+        { text: 'RC Vlogger Recommendation', en: 'RC Vlogger Recommendation' },
+      ],
+      // Models page keywords
+      models: [
+        { text: 'RC Models Database', en: 'RC Models Database' },
+        { text: 'Crawler Recommendation', en: 'Crawler Recommendation' },
+        { text: 'Off-road Recommendation', en: 'Off-road Recommendation' },
+        { text: 'Monster Truck Guide', en: 'Monster Truck Guide' },
+        { text: 'Drift Car', en: 'Drift Car' },
+        { text: 'RC Manual Download', en: 'RC Manual Download' },
+        { text: 'RC Car Specs', en: 'RC Car Specs' },
+        { text: '1/10 Scale RC', en: '1/10 Scale RC' },
+        { text: '1/8 Scale RC', en: '1/8 Scale RC' },
+        { text: 'Entry Level RC', en: 'Entry Level RC' },
+      ],
+      // About page keywords
+      about: [
+        { text: 'Rcstyle.club', en: 'Rcstyle.club' },
+        { text: 'RC Model Directory', en: 'RC Model Directory' },
+        { text: 'RC Resources', en: 'RC Resources' },
+        { text: 'RC Enthusiast', en: 'RC Enthusiast' },
+        { text: 'RC Community', en: 'RC Community' },
+      ],
     },
   },
 } as const;

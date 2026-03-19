@@ -6,6 +6,7 @@ export interface RCModel {
   nameEn?: string;                 // 英文名称
   brand: string;                   // 品牌
   brandEn?: string;                // 品牌英文名
+  brandRegion?: 'CN' | 'US' | 'EU' | 'JP';  // 品牌地区
   type: ModelType;                 // 车型类型
   scale: string;                   // 比例 (如 1/10, 1/8)
   description: string;             // 描述
@@ -14,8 +15,45 @@ export interface RCModel {
   manualUrl?: string;              // 说明书下载URL
   manualUrlEn?: string;            // 英文说明书URL
   features?: string[];             // 特点
-  price?: string;                  // 参考价格
+  price?: string;                  // 参考价格（仅数字，如 "400-600"）
   releaseYear?: number;            // 发布年份
+}
+
+// 国内品牌列表（用于判断货币类型）
+export const domesticBrands = [
+  '易控模型', 'HBX', '雷拉洛', 'Rlaarlo', 'FMS模型', 'FMS',
+  '伟力', 'WLtoys', '双鹰', 'Double E', '美嘉欣', 'MJX',
+  '活石', 'KYWAN', '司马', 'Syma', '雅得', 'Attop',
+  '九鹰', 'JiuYing', '华科尔', 'Walkera', '大疆', 'DJI'
+];
+
+// 判断是否为国内品牌
+export function isDomesticBrand(brand: string, brandEn?: string): boolean {
+  const brandList = [brand, brandEn].filter((b): b is string => Boolean(b));
+  return brandList.some(b => 
+    domesticBrands.some(db => 
+      b.toLowerCase() === db.toLowerCase() || b.includes(db) || db.includes(b)
+    )
+  );
+}
+
+// 格式化价格（根据品牌地区显示对应货币）
+export function formatPrice(price: string | undefined, brand: string, brandEn?: string, language: 'zh' | 'en' = 'zh'): string | null {
+  if (!price) return null;
+  
+  const isDomestic = isDomesticBrand(brand, brandEn);
+  
+  // 如果价格已经包含货币符号，直接返回
+  if (price.includes('¥') || price.includes('$') || price.includes('€')) {
+    return price;
+  }
+  
+  // 根据品牌地区添加货币符号
+  if (isDomestic) {
+    return `¥${price}`;
+  } else {
+    return `$${price}`;
+  }
 }
 
 export type ModelType = 

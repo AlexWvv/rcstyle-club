@@ -1,6 +1,6 @@
 // 客户端搜索封装 - 使用Fuse.js实现模糊搜索
 import Fuse, { IFuseOptions } from 'fuse.js';
-import { newsData } from '@/data/news';
+import { getAllNews } from '@/data/news';
 import { categories } from '@/data/rc-resources';
 
 // 搜索结果类型
@@ -45,6 +45,7 @@ function extractBrands() {
 
 // 资讯数据转换
 function extractNews(): SearchResult[] {
+  const newsData = getAllNews();
   return newsData.map(news => ({
     type: 'news' as const,
     id: news.id,

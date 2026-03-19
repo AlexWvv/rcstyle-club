@@ -25,8 +25,11 @@ export interface NewsArticle {
   originalUrl?: string; // 原文链接
 }
 
+// 导入自动生成的新闻数据
+import generatedNews from './news-generated.json';
+
 // 模拟资讯数据
-export const newsData: NewsArticle[] = [
+const staticNewsData: NewsArticle[] = [
   {
     id: '1',
     title: 'Traxxas发布全新X-Maxx 8S大脚车，性能再升级',
@@ -194,6 +197,21 @@ export const newsData: NewsArticle[] = [
     isNew: false,
   },
 ];
+
+// 合并静态数据和自动生成的数据（去重）
+const mergeNewsData = (): NewsArticle[] => {
+  const staticIds = new Set(staticNewsData.map(n => n.id));
+  const generatedData = (generatedNews as NewsArticle[]).filter(n => !staticIds.has(n.id));
+  return [...generatedData, ...staticNewsData];
+};
+
+// 合并后的新闻数据
+export const newsData = mergeNewsData();
+
+// 获取新闻总数
+export function getNewsCount() {
+  return newsData.length;
+}
 
 // 获取最新资讯（带NEW标记）
 export function getLatestNews() {

@@ -1,5 +1,28 @@
 [
   {
+    "id": "news-1773903096520-7r8mr6cln",
+    "title": "TRAXXAS XRT 新款(舵机升级版)8S四驱速度大脚车遥控电动越野车78086-4",
+    "titleEn": "TRAXXAS XRT 新款(舵机升级版)8S四驱速度大脚车遥控电动越野车78086-4",
+    "summary": "TRAXXAS XRT 新款（舵机升级版）8S四驱速度大脚车遥控电动越野车78086-4\n2026-03-12 17:43:50\n红、蓝、橙、黑色特别版 四色可选 现货\n模型\n遥控车\nRC模型\n艾文R",
+    "summaryEn": "TRAXXAS XRT 新款（舵机升级版）8S四驱速度大脚车遥控电动越野车78086-4\n2026-03-12 17:43:50\n红、蓝、橙、黑色特别版 四色可选 现货\n模型\n遥控车\nRC模型\n艾文R",
+    "content": "TRAXXAS XRT 新款（舵机升级版）8S四驱速度大脚车遥控电动越野车78086-4\n2026-03-12 17:43:50\n红、蓝、橙、黑色特别版 四色可选 现货\n模型\n遥控车\nRC模型\n艾文RCFANS模型\n 发消息\n",
+    "contentEn": "TRAXXAS XRT 新款（舵机升级版）8S四驱速度大脚车遥控电动越野车78086-4\n2026-03-12 17:43:50\n红、蓝、橙、黑色特别版 四色可选 现货\n模型\n遥控车\nRC模型\n艾文RCFANS模型\n 发消息\n",
+    "coverImage": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop",
+    "category": "新品发布",
+    "categoryEn": "New Products",
+    "author": "哔哩哔哩",
+    "authorEn": "哔哩哔哩",
+    "publishDate": "2026-03-12",
+    "views": 7581,
+    "tags": [
+      "Traxxas",
+      "越野车",
+      "大脚车"
+    ],
+    "isNew": true,
+    "originalUrl": "https://www.bilibili.com/video/BV1LAcCzPECY/"
+  },
+  {
     "id": "test-2",
     "title": "测试文章2",
     "titleEn": "测试文章2",
@@ -25,8 +48,14 @@
     "categoryEn": "Industry News",
     "summary": "这是测试摘要",
     "summaryEn": "Test summary",
+    "content": "这是测试内容",
+    "contentEn": "Test content",
     "coverImage": "https://example.com/image.jpg",
+    "author": "RCstyle编辑",
+    "authorEn": "RCstyle Editor",
     "publishDate": "2024-01-01",
-    "views": 100
+    "views": 100,
+    "tags": [],
+    "isNew": false
   }
 ]

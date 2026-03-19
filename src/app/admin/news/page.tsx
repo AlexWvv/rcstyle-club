@@ -63,8 +63,8 @@ const NEWS_SOURCES = [
     nameEn: 'RCFans',
     region: 'CN',
     language: 'zh',
-    url: 'https://www.rcfans.com/',
-    categories: ['新闻', '遥控车新闻', '评测', '技术'],
+    url: 'https://www.rcfans.com/news/rccarnews/',
+    categories: ['遥控车新闻', '新闻', '评测', '技术'],
   },
   {
     id: '5imx',

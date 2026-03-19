@@ -1245,6 +1245,11 @@ export const categories: Category[] = [
   electronics
 ];
 
+// 获取品牌总数
+export const getBrandsCount = (): number => {
+  return categories.reduce((total, category) => total + category.brands.length, 0);
+};
+
 // 获取梯队标签
 export const getTierLabel = (tier?: 'first' | 'second' | 'third') => {
   switch (tier) {

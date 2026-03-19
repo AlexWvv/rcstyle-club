@@ -21,27 +21,48 @@ export const metadata: Metadata = {
   description:
     'Rcstyle.club 是专业的RC汽车模型资源导航平台，汇集国内外知名RC品牌、视频博主、社区论坛等优质资源，为RC爱好者提供一站式的信息聚合服务。涵盖遥控车模型、配件、教程、评测等内容。',
   keywords: [
-    'RC汽车模型',
+    // 核心词（高搜索量）
+    'RC遥控车',
+    '遥控车模型',
+    'RC模型',
     '遥控车',
     '模型车',
+    'RC车模',
+    '遥控赛车',
+    '无线电遥控车',
+    // 品牌词
+    'HBX遥控车',
+    '易控遥控车',
+    'Traxxas',
+    'Arrma',
+    'Axial攀爬车',
+    'FMS模型',
+    '伟力遥控车',
+    '雷拉洛',
+    'RLAARLO',
+    // 车型词
+    '攀爬车',
+    '越野车',
+    '大脚车',
+    '漂移车',
+    '短卡',
+    '仿真车',
+    '房车',
+    // 购买词
+    '遥控车哪个牌子好',
+    'RC遥控车推荐',
+    '入门遥控车',
+    '新手遥控车推荐',
+    '性价比遥控车',
+    // 资讯词
+    'RC资讯',
+    '遥控车测评',
+    'RC评测',
+    '遥控车教程',
+    // 平台词
     'Rcstyle.club',
     'RC模型导航',
-    '遥控车品牌',
-    'RC配件',
-    '模型车教程',
-    '遥控车评测',
-    'RC Hobby',
-    'Remote Control Car',
-    'RC模型爱好者',
-    '遥控车社区',
-    '模型车论坛',
-    'HBX',
-    'RLAARLO',
-    'FMS',
-    'Wltoys',
-    'MJX',
-    '遥控车购买',
-    '模型车推荐',
+    '遥控车资源',
   ],
   authors: [{ name: 'Rcstyle.club', url: 'https://rcstyle.club' }],
   creator: 'Rcstyle.club',
@@ -119,7 +140,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <script
           type="application/ld+json"

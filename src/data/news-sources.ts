@@ -163,17 +163,17 @@ export const NEWS_SOURCES: NewsSource[] = [
     baseUrl: 'https://www.rcfans.com',
     categories: [
       {
-        id: 'rcfans-news',
-        name: '新闻',
-        nameEn: 'News',
-        url: 'https://www.rcfans.com/news/',
-        type: 'news',
-      },
-      {
         id: 'rcfans-rccarnews',
         name: '遥控车新闻',
         nameEn: 'RC Car News',
         url: 'https://www.rcfans.com/news/rccarnews/',
+        type: 'news',
+      },
+      {
+        id: 'rcfans-news',
+        name: '新闻',
+        nameEn: 'News',
+        url: 'https://www.rcfans.com/news/',
         type: 'news',
       },
       {
