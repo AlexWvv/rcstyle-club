@@ -1070,7 +1070,7 @@ export const vloggers: Vlogger[] = [
     description: '资深RC玩家，专注于高端整车测评与玩法分享，风格幽默风趣，深受玩家喜爱',
     descriptionEn: 'Senior RC enthusiast, specializing in high-end vehicle reviews and gameplay sharing, humorous style, loved by players',
     subscribers: '30万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c001.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_486276ef-8465-4b06-9a63-caa8751168e9.jpeg?sign=1805433094-c11188b90c-0-8ca2304e4745afe4c26f6a527c394639ae90d16f381d4811a2c5dedbd07c6701'
   },
   {
     name: '超人聊模型',
@@ -1080,7 +1080,7 @@ export const vloggers: Vlogger[] = [
     douyinId: '超人聊模型',
     description: '专业RC模型测评博主，涵盖各类车型，从入门到高端全方位解析',
     subscribers: '25万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c002.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_c2a39914-1f3c-4a3c-bf5c-15bb82558d6e.jpeg?sign=1805433094-19c1784acd-0-8384fa757d6a264ac75096ba5f88a6374725de4844e7a14366923dd4cafc4b26'
   },
   {
     name: '小柚玩RC',
@@ -1090,7 +1090,7 @@ export const vloggers: Vlogger[] = [
     douyinId: '小柚玩RC',
     description: '萌新友好的RC入门博主，详细讲解入门知识和避坑指南',
     subscribers: '20万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c003.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_c0d1dea5-0df8-4ee5-8f12-b428ffdc0f40.jpeg?sign=1805433094-bd2fb012c1-0-0a8156789ddaddaad20dec1acfdfaf9bfa376901832202a2f31bbcd42dd3e1f3'
   },
   {
     name: '铁男模型俱乐部',
@@ -1100,7 +1100,7 @@ export const vloggers: Vlogger[] = [
     douyinId: '铁男模型俱乐部',
     description: '硬核RC玩家社区，分享攀爬车、越野车改装与比赛经验',
     subscribers: '15万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c004.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_a361544b-fb04-4443-a1c2-faef7ffb8ea6.jpeg?sign=1805433093-8ff9f594e1-0-0ad5cf938b75b25a13afbb8cf76e46ca753122245f0a306af5eb9c7e92a5ad80'
   },
   {
     name: '杰米车库',
@@ -1110,7 +1110,7 @@ export const vloggers: Vlogger[] = [
     douyinId: '杰米车库',
     description: '专业RC车库风格频道，整车测评、改装教程、赛道实测',
     subscribers: '40万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c005.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_d9581313-02ea-4097-8116-692dde380e13.jpeg?sign=1805433123-518ef35d14-0-5ee61e6d9f34fce4a469ec0e842890c0c507925c50a4c33cc5301008a5884325'
   },
   {
     name: '奶爸玩模型',
@@ -1120,7 +1120,7 @@ export const vloggers: Vlogger[] = [
     douyinId: '奶爸玩模型',
     description: '亲子RC玩车博主，分享与孩子一起玩RC的乐趣，适合家庭玩家',
     subscribers: '18万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c006.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_b53e30f8-307e-4c2c-a65e-4b2bcdf9d726.jpeg?sign=1805433123-1be4abc68e-0-af9c3ff927ead1859dba14d3400d0633f98348f15645e18b9025ce5c02fc45ad'
   },
   {
     name: 'TONY老师玩RC',
@@ -1130,7 +1130,7 @@ export const vloggers: Vlogger[] = [
     douyinId: 'TONY老师玩RC',
     description: '技术流RC博主，深入讲解RC电设、调校与竞速技巧',
     subscribers: '12万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c007.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_0711fbc5-d23a-4c05-83a5-e0061b3d8b17.jpeg?sign=1805433124-baac890276-0-a52b01722241f871024c1fa96413f593ac248d4b578567b2c46edc4d84c2340d'
   },
   {
     name: '牛顿RC工作室',
@@ -1140,7 +1140,7 @@ export const vloggers: Vlogger[] = [
     douyinId: '牛顿RC工作室',
     description: '专业RC技术工作室，分享深度改装、电子设备调校知识',
     subscribers: '10万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c008.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_06135c03-c836-4b50-9e1f-749373c9072e.jpeg?sign=1805433124-11c475ba46-0-d2ccd8f87d7209b72cd2edbdf5acd52c358c28edda376f6af969d4c3ed672a98'
   },
   {
     name: '成都极速蜗牛',
@@ -1150,7 +1150,7 @@ export const vloggers: Vlogger[] = [
     douyinId: '成都极速蜗牛',
     description: '成都本地RC玩家圈子，组织线下活动与比赛，分享西南地区玩车资讯',
     subscribers: '8万+',
-    logo: 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/tos-cn-i-0813c009.jpeg'
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_b8645f4f-aecc-48fd-8e5d-18609cc3355a.jpeg?sign=1805433123-a4b78bf70c-0-68b09e89ef526bcd16c807ab1cd05861fe2039a36ffe683543ef6ac86ea793ae'
   },
   // 国外博主
   {
@@ -1159,7 +1159,9 @@ export const vloggers: Vlogger[] = [
     country: '美国',
     website: 'https://www.youtube.com/@rccaraction',
     description: '全球最大的RC杂志官方频道，专业测评和资讯',
-    subscribers: '100万+'
+    descriptionEn: "World's largest RC magazine official channel, professional reviews and news",
+    subscribers: '100万+',
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_67dea982-6523-4634-829c-aabb1e26f4f9.jpeg?sign=1805433227-70084f375c-0-efd120b88aca5556718df5a6162639e79b8dc462beeaeb5691268101341b97a8'
   },
   {
     name: 'JANG TheRCNetwork',
@@ -1167,7 +1169,9 @@ export const vloggers: Vlogger[] = [
     country: '美国',
     website: 'https://www.youtube.com/@JANGBRiCKS',
     description: '知名RC测评博主，以详细评测和暴力测试著称',
-    subscribers: '200万+'
+    descriptionEn: 'Famous RC reviewer known for detailed reviews and brutal durability tests',
+    subscribers: '200万+',
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_7d500391-db1b-4f5a-9131-4d04e4650dc0.jpeg?sign=1805433230-86dddebbea-0-4bae1dcb2f8479b81a7a4b808fd16fc2254e384c25399af6867e1ee6a7db4789'
   },
   {
     name: 'RCSparks Studio',
@@ -1175,7 +1179,9 @@ export const vloggers: Vlogger[] = [
     country: '加拿大',
     website: 'https://www.youtube.com/@rcsparks',
     description: '电影级RC视频制作，精彩的故事化内容',
-    subscribers: '300万+'
+    descriptionEn: 'Cinematic RC video production with compelling story-driven content',
+    subscribers: '300万+',
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_6243dd88-b197-4a38-9199-3c1887a7f3b4.jpeg?sign=1805433226-909a4b27fe-0-a965effef290fe44892119c3be6c11a9b5c12e1437db09be7298b5924ab63e3e'
   },
   {
     name: 'Tech One Hobby',
@@ -1183,7 +1189,9 @@ export const vloggers: Vlogger[] = [
     country: '美国',
     website: 'https://www.youtube.com/@techonehobby',
     description: '专业攀爬车和越野车内容创作者',
-    subscribers: '50万+'
+    descriptionEn: 'Professional crawler and off-road RC content creator',
+    subscribers: '50万+',
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_40ec2122-3afb-4e4a-b005-382caa05f123.jpeg?sign=1805433228-e3125531f9-0-58e2e25af180983019223d0dc07c7ede34f2ebb812ee324b7912004ac0319d28'
   },
   {
     name: 'RC Driver',
@@ -1191,7 +1199,9 @@ export const vloggers: Vlogger[] = [
     country: '美国',
     website: 'https://www.youtube.com/@RCDriverOnline',
     description: 'RC车评测和技术讲解，专业性强',
-    subscribers: '80万+'
+    descriptionEn: 'RC car reviews and technical tutorials with professional expertise',
+    subscribers: '80万+',
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_36ee5b49-9156-4a54-ba9e-c2aa487c799c.jpeg?sign=1805433247-3837f353f9-0-e09b605192458b061b534fca62f14406358733bed73079f7496499c68b9029cb'
   },
   {
     name: 'RCMart',
@@ -1199,7 +1209,9 @@ export const vloggers: Vlogger[] = [
     country: '中国香港',
     website: 'https://www.youtube.com/@rcmart',
     description: '香港知名RC店铺，分享新品和改装技巧',
-    subscribers: '40万+'
+    descriptionEn: "Hong Kong's famous RC shop sharing new products and modification tips",
+    subscribers: '40万+',
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_7f462a53-3830-45d5-ad7b-22e67ff7f879.jpeg?sign=1805433247-91704ba6ad-0-886e7f6028e8e67e2395d94d2c5b6add4e92ff5102acff03e47532e8f89bd2d1'
   },
   {
     name: 'Tarzan RC',
@@ -1207,7 +1219,9 @@ export const vloggers: Vlogger[] = [
     country: '日本',
     website: 'https://www.youtube.com/@tarzanrc',
     description: '日本知名玩家，攀爬车和迷你Z专家',
-    subscribers: '60万+'
+    descriptionEn: 'Famous Japanese RC enthusiast, expert in crawlers and Mini-Z',
+    subscribers: '60万+',
+    logo: 'https://coze-coding-project.tos.coze.site/coze_storage_7617916730349781007/image/generate_image_0fbefc83-62c9-4c47-a835-0ba2fb471b8a.jpeg?sign=1805433247-ea1cb76d96-0-89ea0187b68a57846686904c052e264a2f1ae8546e60eab4fb5355545d6152c2'
   },
   {
     name: 'Essential RC',

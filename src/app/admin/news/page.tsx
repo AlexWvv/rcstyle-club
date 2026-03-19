@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Newspaper, Clock, CheckCircle, XCircle, Globe, Languages } from 'lucide-react';
+import { RefreshCw, Newspaper, Clock, CheckCircle, XCircle, Globe, Languages, Settings, Link as LinkIcon } from 'lucide-react';
+import Link from 'next/link';
 import { LoginForm, LogoutButton, isAuthenticated, logout } from '@/components/admin/LoginForm';
 
 // 抓取源列表
@@ -181,6 +182,13 @@ export default function NewsAdminPage() {
             </p>
           </div>
           <LogoutButton onLogout={handleLogout} />
+          <Link
+            href="/admin/crawl"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+          >
+            <Settings className="w-4 h-4" />
+            抓取设置
+          </Link>
         </div>
 
         {/* 功能说明 */}

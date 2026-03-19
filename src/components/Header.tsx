@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { SearchModal } from '@/components/SearchModal';
 import { useTranslation } from '@/lib/i18n/context';
-import { Play, Newspaper, Menu, X, Car, Store } from 'lucide-react';
+import { Newspaper, Menu, X, Car, Store } from 'lucide-react';
 
 export function Header() {
   const { t, language } = useTranslation();
@@ -18,12 +18,7 @@ export function Header() {
         <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 bg-slate-800 rounded-lg flex items-center justify-center" aria-hidden="true">
-              <Play className="w-4 h-4 text-slate-400" />
-            </div>
-            <div>
-              <h1 className="text-base font-semibold text-white">Rcstyle.club</h1>
-            </div>
+            <h1 className="text-xl font-bold text-white tracking-wide">RCSTYLE<span className="text-red-500">.CLUB</span></h1>
           </Link>
           
           {/* 桌面端导航 */}

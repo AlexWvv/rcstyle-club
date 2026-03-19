@@ -7,11 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   Car, Radio, Zap, Settings, Battery, Plug, Lightbulb, Circle,
-  Play, ExternalLink, Newspaper, Calendar, Eye, ArrowRight, Search,
-  Users, MapPin, Youtube
+  ExternalLink, Newspaper, Calendar, Eye, ArrowRight, Search,
+  Youtube, Flame, RefreshCw, TrendingUp
 } from 'lucide-react';
 import { categories, vloggers } from '@/data/rc-resources';
-import { EventCarousel } from '@/components/carousel/EventCarousel';
 import { getLatestNews, formatDate, formatViews } from '@/data/news';
 import { useTranslation } from '@/lib/i18n/context';
 import { Header } from '@/components/Header';
@@ -42,27 +41,10 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
   'electronics': { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/30' },
 };
 
-// 搜索引导词
-const searchSuggestions = [
-  { zh: '攀爬车推荐', en: 'RC Crawler Recommend' },
-  { zh: 'Traxxas 新品', en: 'Traxxas New Release' },
-  { zh: '漂移车入门', en: 'RC Drift Beginner' },
-  { zh: '电池保养', en: 'Battery Maintenance' },
-];
-
 export default function Home() {
   const { t, language } = useTranslation();
-  const { trackBrandClick, trackNewsView, trackExternalLink } = useAnalytics();
+  const { trackBrandClick } = useAnalytics();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [currentSuggestion, setCurrentSuggestion] = useState(0);
-
-  // 轮播引导词
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSuggestion((prev) => (prev + 1) % searchSuggestions.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
 
   // 统计数据
   const stats = useMemo(() => {
@@ -188,64 +170,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 资讯中心 */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Newspaper className="w-5 h-5 text-slate-400" />
-              {language === 'zh' ? '最新资讯' : 'Latest News'}
-            </h2>
-            <Link 
-              href="/news" 
-              className="text-sm text-orange-400 hover:text-orange-300 flex items-center gap-1"
-            >
-              {language === 'zh' ? '查看全部' : 'View All'}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {getLatestNews().slice(0, 3).map((article) => (
-              <Link key={article.id} href={`/news/${article.id}`}>
-                <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors overflow-hidden h-full">
-                  <div className="h-36 relative">
-                    <img 
-                      src={article.coverImage}
-                      alt={article.title}
-                      className="w-full h-full object-cover"
-                    />
-                    {article.isNew && (
-                      <Badge className="absolute top-2 right-2 bg-orange-500 text-white text-xs">
-                        NEW
-                      </Badge>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-medium text-white mb-2 line-clamp-2 text-sm">
-                      {language === 'zh' ? article.title : article.titleEn}
-                    </h3>
-                    <div className="flex items-center gap-3 text-xs text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {formatDate(article.publishDate, language)}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        {formatViews(article.views)}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* 赛事轮播 */}
-        <section className="mb-12">
-          <EventCarousel />
-        </section>
-
         {/* 博主推荐 */}
         <section className="mb-12">
           <div className="flex items-center justify-between mb-5">
@@ -253,15 +177,32 @@ export default function Home() {
               <Youtube className="w-5 h-5 text-slate-400" />
               {language === 'zh' ? '博主推荐' : 'RC Vloggers'}
             </h2>
+            <Link href="/vloggers">
+              <Button variant="ghost" size="sm" className="text-slate-400 hover:text-orange-400">
+                {language === 'zh' ? '查看全部' : 'View All'}
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            </Link>
           </div>
 
           {/* 国内博主 */}
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3 text-sm">
-              <span className="text-orange-400">🇨🇳</span>
-              <span className="text-slate-400">{language === 'zh' ? '国内博主' : 'Domestic'}</span>
+            <div className="flex items-center justify-between mb-3 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-orange-400">🇨🇳</span>
+                <span className="text-slate-400">{language === 'zh' ? '国内博主' : 'Domestic'}</span>
+                <Badge variant="outline" className="text-xs bg-orange-500/10 text-orange-400 border-orange-500/30">
+                  {vloggers.filter(v => v.country === '中国').length}
+                </Badge>
+              </div>
+              <Link href="/vloggers">
+                <Button variant="link" size="sm" className="text-orange-400 hover:text-orange-300 p-0 h-auto">
+                  {language === 'zh' ? '更多' : 'More'}
+                  <ArrowRight className="w-3 h-3 ml-1" />
+                </Button>
+              </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {vloggers.filter(v => v.country === '中国').slice(0, 4).map((vlogger) => (
                 <a 
                   key={vlogger.name}
@@ -269,27 +210,37 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors">
-                    <CardContent className="p-3 flex items-center gap-3">
+                  <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors group">
+                    <CardContent className="p-4 flex items-start gap-3">
                       {vlogger.logo ? (
                         <img 
                           src={vlogger.logo}
                           alt={vlogger.name}
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="w-12 h-12 rounded-full object-cover shrink-0"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center">
-                          <span className="text-slate-300 text-sm">{vlogger.name.charAt(0)}</span>
+                        <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
+                          <span className="text-slate-300 font-medium">{vlogger.name.charAt(0)}</span>
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="text-white text-sm font-medium truncate">
-                          {language === 'zh' ? vlogger.name : vlogger.nameEn || vlogger.name}
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-white font-medium truncate">
+                            {language === 'zh' ? vlogger.name : vlogger.nameEn || vlogger.name}
+                          </span>
+                          {vlogger.subscribers && (
+                            <Badge variant="outline" className="text-xs bg-pink-500/10 text-pink-400 border-pink-500/30 shrink-0">
+                              {vlogger.subscribers}
+                            </Badge>
+                          )}
                         </div>
-                        {vlogger.subscribers && (
-                          <div className="text-xs text-slate-500">{vlogger.subscribers}</div>
+                        {vlogger.description && (
+                          <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                            {language === 'zh' ? vlogger.description : vlogger.descriptionEn || vlogger.description}
+                          </p>
                         )}
                       </div>
+                      <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400 transition-colors shrink-0 mt-1" />
                     </CardContent>
                   </Card>
                 </a>
@@ -299,11 +250,22 @@ export default function Home() {
 
           {/* 海外博主 */}
           <div>
-            <div className="flex items-center gap-2 mb-3 text-sm">
-              <span className="text-blue-400">🌍</span>
-              <span className="text-slate-400">{language === 'zh' ? '海外博主' : 'Overseas'}</span>
+            <div className="flex items-center justify-between mb-3 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-blue-400">🌍</span>
+                <span className="text-slate-400">{language === 'zh' ? '海外博主' : 'Overseas'}</span>
+                <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-400 border-blue-500/30">
+                  {vloggers.filter(v => v.country !== '中国').length}
+                </Badge>
+              </div>
+              <Link href="/vloggers">
+                <Button variant="link" size="sm" className="text-blue-400 hover:text-blue-300 p-0 h-auto">
+                  {language === 'zh' ? '更多' : 'More'}
+                  <ArrowRight className="w-3 h-3 ml-1" />
+                </Button>
+              </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {vloggers.filter(v => v.country !== '中国').slice(0, 4).map((vlogger) => (
                 <a 
                   key={vlogger.name}
@@ -311,29 +273,129 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors">
-                    <CardContent className="p-3 flex items-center gap-3">
+                  <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors group">
+                    <CardContent className="p-4 flex items-start gap-3">
                       {vlogger.logo ? (
                         <img 
                           src={vlogger.logo}
                           alt={vlogger.name}
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="w-12 h-12 rounded-full object-cover shrink-0"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center">
-                          <span className="text-slate-300 text-sm">{vlogger.name.charAt(0)}</span>
+                        <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
+                          <span className="text-slate-300 font-medium">{vlogger.name.charAt(0)}</span>
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="text-white text-sm font-medium truncate">{vlogger.name}</div>
-                        <div className="text-xs text-slate-500">{vlogger.country}</div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-white font-medium truncate">{vlogger.name}</span>
+                          <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-400 border-blue-500/30 shrink-0">
+                            {vlogger.country}
+                          </Badge>
+                          {vlogger.subscribers && (
+                            <Badge variant="outline" className="text-xs bg-pink-500/10 text-pink-400 border-pink-500/30 shrink-0">
+                              {vlogger.subscribers}
+                            </Badge>
+                          )}
+                        </div>
+                        {vlogger.description && (
+                          <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                            {language === 'zh' ? vlogger.description : vlogger.descriptionEn || vlogger.description}
+                          </p>
+                        )}
                       </div>
+                      <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400 transition-colors shrink-0 mt-1" />
                     </CardContent>
                   </Card>
                 </a>
               ))}
             </div>
           </div>
+        </section>
+
+        {/* 热度排行榜 */}
+        <section className="mb-12">
+          <Card className="bg-slate-800/50 border-slate-700 overflow-hidden">
+            <CardContent className="p-0">
+              {/* 标题栏 */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+                <div className="flex items-center gap-2">
+                  <Flame className="w-5 h-5 text-orange-500" />
+                  <span className="text-white font-semibold">
+                    {language === 'zh' ? '热度排行榜' : 'Trending'}
+                  </span>
+                </div>
+                <Link 
+                  href="/news" 
+                  className="text-xs text-slate-400 hover:text-orange-400 flex items-center gap-1 transition-colors"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>{language === 'zh' ? '换一换' : 'Refresh'}</span>
+                </Link>
+              </div>
+              
+              {/* 热榜列表 */}
+              <div className="divide-y divide-slate-700/50">
+                {getLatestNews().slice(0, 5).map((article, index) => {
+                  // 排名样式
+                  const getRankStyle = (rank: number) => {
+                    if (rank === 1) return 'bg-red-500 text-white';
+                    if (rank === 2) return 'bg-orange-500 text-white';
+                    if (rank === 3) return 'bg-amber-500 text-white';
+                    return 'bg-slate-700 text-slate-400';
+                  };
+                  
+                  return (
+                    <Link 
+                      key={article.id} 
+                      href={`/news/${article.id}`}
+                      className="flex items-start gap-3 px-4 py-3 hover:bg-slate-700/30 transition-colors group"
+                    >
+                      {/* 排名数字 */}
+                      <div className={`w-5 h-5 rounded text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 ${getRankStyle(index + 1)}`}>
+                        {index + 1}
+                      </div>
+                      
+                      {/* 标题和标签 */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white text-sm group-hover:text-orange-400 transition-colors line-clamp-1">
+                            {language === 'zh' ? article.title : article.titleEn}
+                          </span>
+                          {/* 热门/最新标签 */}
+                          {article.views > 15000 && (
+                            <Badge className="bg-red-500/20 text-red-400 text-[10px] px-1.5 py-0 shrink-0">
+                              {language === 'zh' ? '热' : 'Hot'}
+                            </Badge>
+                          )}
+                          {article.isNew && (
+                            <Badge className="bg-orange-500/20 text-orange-400 text-[10px] px-1.5 py-0 shrink-0">
+                              {language === 'zh' ? '新' : 'New'}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* 阅读量 */}
+                      <div className="flex items-center gap-1 text-xs text-slate-500 shrink-0">
+                        <TrendingUp className="w-3 h-3" />
+                        <span>{formatViews(article.views)}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              
+              {/* 查看更多 */}
+              <Link 
+                href="/news" 
+                className="flex items-center justify-center gap-1 px-4 py-3 text-sm text-slate-400 hover:text-orange-400 border-t border-slate-700/50 transition-colors"
+              >
+                <span>{language === 'zh' ? '查看完整榜单' : 'View Full List'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </CardContent>
+          </Card>
         </section>
 
         {/* 底部 */}

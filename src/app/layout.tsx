@@ -5,6 +5,15 @@ import { Analytics } from '@/components/Analytics';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://rcstyle.club'),
+  icons: {
+    icon: [
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   title: {
     default: 'Rcstyle.club | RC汽车模型资源导航',
     template: '%s | Rcstyle.club',

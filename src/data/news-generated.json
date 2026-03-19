@@ -1,5 +1,23 @@
 [
   {
+    "id": "test-2",
+    "title": "测试文章2",
+    "titleEn": "测试文章2",
+    "summary": "测试摘要2",
+    "summaryEn": "测试摘要2",
+    "content": "测试摘要2",
+    "contentEn": "测试摘要2",
+    "coverImage": "/images/news-placeholder.jpg",
+    "category": "行业动态",
+    "categoryEn": "Industry News",
+    "author": "RCstyle编辑",
+    "authorEn": "RCstyle Editor",
+    "publishDate": "2026-03-19",
+    "views": 6573,
+    "tags": [],
+    "isNew": true
+  },
+  {
     "id": "test-1",
     "title": "测试文章",
     "titleEn": "Test Article",

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
   Car, Download, Search, Filter, FileText, 
-  ChevronDown, X, ExternalLink, Calendar, Tag
+  ChevronDown, X, ExternalLink, Calendar, Tag, Play
 } from 'lucide-react';
 import { 
   modelsData, modelTypeLabels, getAllModelTypes, 
@@ -34,10 +34,22 @@ const getScaleBadgeStyle = (scale: string): string => {
   return scaleColors[scale] || 'bg-slate-500/20 text-slate-400 border-slate-500/30';
 };
 
+// 抖音搜索URL
+const DOUYIN_SEARCH_URL = 'https://www.douyin.com/search/';
+
 // 车型卡片组件
 function ModelCard({ model, language }: { model: RCModel; language: 'zh' | 'en' }) {
   const typeLabel = modelTypeLabels[model.type];
   const scaleStyle = getScaleBadgeStyle(model.scale);
+  
+  // 获取车型名称用于搜索
+  const searchName = language === 'zh' ? model.name : (model.nameEn || model.name);
+  
+  // 跳转到抖音搜索
+  const handleDouyinSearch = () => {
+    const url = `${DOUYIN_SEARCH_URL}${encodeURIComponent(searchName)}`;
+    window.open(url, '_blank');
+  };
   
   return (
     <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors group">
@@ -107,19 +119,34 @@ function ModelCard({ model, language }: { model: RCModel; language: 'zh' | 'en' 
             </div>
           )}
           
-          {/* 说明书下载 */}
-          {model.manualUrl && (
+          {/* 操作按钮 */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* 视频介绍按钮 */}
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-1.5 text-xs bg-orange-500/10 text-orange-400 border-orange-500/30 hover:bg-orange-500/20"
-              onClick={() => window.open(model.manualUrl, '_blank')}
+              className="h-8 gap-1.5 text-xs bg-pink-500/10 text-pink-400 border-pink-500/30 hover:bg-pink-500/20"
+              onClick={handleDouyinSearch}
             >
-              <Download className="w-3.5 h-3.5" />
-              {language === 'zh' ? '说明书' : 'Manual'}
+              <Play className="w-3.5 h-3.5" />
+              {language === 'zh' ? '视频' : 'Video'}
               <ExternalLink className="w-3 h-3 opacity-50" />
             </Button>
-          )}
+            
+            {/* 说明书下载 */}
+            {model.manualUrl && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 text-xs bg-orange-500/10 text-orange-400 border-orange-500/30 hover:bg-orange-500/20"
+                onClick={() => window.open(model.manualUrl, '_blank')}
+              >
+                <Download className="w-3.5 h-3.5" />
+                {language === 'zh' ? '说明书' : 'Manual'}
+                <ExternalLink className="w-3 h-3 opacity-50" />
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
