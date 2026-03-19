@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { SearchModal } from '@/components/SearchModal';
-import { UserMenu } from '@/components/auth/UserMenu';
 import { useTranslation } from '@/lib/i18n/context';
-import { Play, Search, Star, Globe, Newspaper, Menu, X } from 'lucide-react';
+import { Play, Newspaper, Menu, X, Car, Store } from 'lucide-react';
 
 export function Header() {
   const { t, language } = useTranslation();
@@ -16,121 +14,104 @@ export function Header() {
   
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-slate-700 bg-slate-900/95 backdrop-blur-sm" role="banner">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-900" role="banner">
+        <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center" aria-hidden="true">
-              <Play className="w-6 h-6 text-white" fill="white" />
+            <div className="w-9 h-9 bg-slate-800 rounded-lg flex items-center justify-center" aria-hidden="true">
+              <Play className="w-4 h-4 text-slate-400" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Rcstyle.club</h1>
-              <p className="text-xs text-slate-400 hidden sm:block">RC Hobby Resource Hub</p>
+              <h1 className="text-base font-semibold text-white">Rcstyle.club</h1>
             </div>
           </Link>
           
           {/* 桌面端导航 */}
-          <nav className="hidden md:flex items-center gap-4" aria-label="主导航">
-            {/* 快速搜索按钮 */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800"
+          <nav className="hidden md:flex items-center gap-6" aria-label="主导航">
+            {/* 车型库链接 */}
+            <Link 
+              href="/models"
+              className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"
             >
-              <Search className="w-4 h-4" />
-              <span>{t('nav.search')}</span>
-              <kbd className="hidden lg:inline-flex px-1.5 py-0.5 text-xs bg-slate-700 rounded text-slate-400 ml-1">
-                ⌘K
-              </kbd>
-            </Button>
-            
-            {/* 资讯链接 */}
-            <Link href="/news">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800"
-              >
-                <Newspaper className="w-4 h-4" />
-                <span>{t('nav.news')}</span>
-              </Button>
+              <Car className="w-4 h-4" />
+              <span>{language === 'zh' ? '车型库' : 'Models'}</span>
             </Link>
             
-            {/* 收藏引导 */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-lg">
-              <Star className="w-4 h-4 text-yellow-400" fill="currentColor" aria-hidden="true" />
-              <span className="text-sm text-yellow-400">
-                {t('home.bookmarkHint')} <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-xs font-mono mx-1">Ctrl</kbd>+<kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-xs font-mono mx-1">D</kbd> {t('home.bookmarkHint2')}
-              </span>
-            </div>
+            {/* 品牌导航链接 */}
+            <Link 
+              href="/brands"
+              className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"
+            >
+              <Store className="w-4 h-4" />
+              <span>{language === 'zh' ? '品牌' : 'Brands'}</span>
+            </Link>
             
-            {/* 语言信息 */}
-            <span className="flex items-center gap-1 text-sm text-slate-400">
-              <Globe className="w-4 h-4 text-blue-400" />
-              {t('home.selected')}
-            </span>
+            {/* 资讯链接 */}
+            <Link 
+              href="/news"
+              className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"
+            >
+              <Newspaper className="w-4 h-4" />
+              <span>{t('nav.news')}</span>
+            </Link>
+            
+            {/* 分隔线 */}
+            <div className="w-px h-4 bg-slate-700"></div>
             
             {/* 语言切换 */}
             <LanguageSwitcher />
-            
-            {/* 用户菜单 */}
-            <UserMenu />
           </nav>
           
           {/* 移动端菜单 */}
           <div className="flex md:hidden items-center gap-2">
-            {/* 移动端搜索 */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSearchOpen(true)}
-              className="p-2 text-slate-300"
-            >
-              <Search className="w-5 h-5" />
-            </Button>
-            
-            {/* 移动端用户菜单 */}
-            <UserMenu />
-            
             {/* 移动端菜单按钮 */}
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-300"
+              className="p-2 text-slate-400 hover:text-white transition-colors"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
+            </button>
           </div>
         </div>
         
         {/* 移动端菜单展开 */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-700 bg-slate-900">
-            <nav className="container mx-auto px-4 py-4 flex flex-col gap-3">
+          <div className="md:hidden border-t border-slate-800 bg-slate-900">
+            <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
+              <Link 
+                href="/models" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                <Car className="w-5 h-5" />
+                <span>{language === 'zh' ? '车型库' : 'Models'}</span>
+              </Link>
+              <Link 
+                href="/brands" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                <Store className="w-5 h-5" />
+                <span>{language === 'zh' ? '品牌' : 'Brands'}</span>
+              </Link>
               <Link 
                 href="/news" 
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
               >
-                <Newspaper className="w-4 h-4" />
-                {t('nav.news')}
+                <Newspaper className="w-5 h-5" />
+                <span>{t('nav.news')}</span>
               </Link>
-              <div className="flex items-center justify-between px-4 py-2">
-                <span className="text-sm text-slate-400">{language === 'zh' ? '语言' : 'Language'}</span>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-slate-400">{language === 'zh' ? '语言' : 'Language'}</span>
                 <LanguageSwitcher />
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 text-yellow-400 text-sm">
-                <Star className="w-4 h-4" fill="currentColor" />
-                {t('home.bookmarkHint')} Ctrl+D {t('home.bookmarkHint2')}
               </div>
             </nav>
           </div>
         )}
       </header>
       
-      {/* 搜索弹窗 */}
+      {/* 搜索弹窗 - 保留供首页搜索框使用 */}
       <SearchModal open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );

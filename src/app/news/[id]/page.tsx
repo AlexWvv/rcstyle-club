@@ -1,5 +1,6 @@
 'use client';
 
+import { use } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
@@ -10,12 +11,13 @@ import { useTranslation } from '@/lib/i18n/context';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function NewsDetailPage({ params }: Props) {
   const { t, language } = useTranslation();
-  const article = getNewsById(params.id);
+  const { id } = use(params);
+  const article = getNewsById(id);
 
   if (!article) {
     notFound();

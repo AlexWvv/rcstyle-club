@@ -1,593 +1,347 @@
 'use client';
 
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Car, Radio, Zap, Settings, Circle, Battery, Plug, Lightbulb, 
-  Youtube, Play, ExternalLink, Globe, Star, DollarSign, ShoppingCart, Users, 
-  Newspaper, Calendar, Eye, ArrowRight
+  Car, Radio, Zap, Settings, Battery, Plug, Lightbulb, Circle,
+  Play, ExternalLink, Newspaper, Calendar, Eye, ArrowRight, Search,
+  Users, MapPin, Youtube
 } from 'lucide-react';
 import { categories, vloggers } from '@/data/rc-resources';
-import type { Brand } from '@/data/rc-resources';
-import { AdBanner, AdCard, AdInline } from '@/components/ads/AdSlot';
 import { EventCarousel } from '@/components/carousel/EventCarousel';
 import { getLatestNews, formatDate, formatViews } from '@/data/news';
 import { useTranslation } from '@/lib/i18n/context';
 import { Header } from '@/components/Header';
+import { SearchModal } from '@/components/SearchModal';
+import { useAnalytics } from '@/lib/analytics';
 
 // 图标映射
 const iconMap: Record<string, React.ReactNode> = {
-  'Car': <Car className="w-5 h-5" />,
-  'Radio': <Radio className="w-5 h-5" />,
-  'Zap': <Zap className="w-5 h-5" />,
-  'Settings': <Settings className="w-5 h-5" />,
-  'Circle': <Circle className="w-5 h-5" />,
-  'Battery': <Battery className="w-5 h-5" />,
-  'Plug': <Plug className="w-5 h-5" />,
-  'Lightbulb': <Lightbulb className="w-5 h-5" />
+  'Car': <Car className="w-6 h-6" />,
+  'Radio': <Radio className="w-6 h-6" />,
+  'Zap': <Zap className="w-6 h-6" />,
+  'Settings': <Settings className="w-6 h-6" />,
+  'Circle': <Circle className="w-6 h-6" />,
+  'Battery': <Battery className="w-6 h-6" />,
+  'Plug': <Plug className="w-6 h-6" />,
+  'Lightbulb': <Lightbulb className="w-6 h-6" />
 };
+
+// 分类颜色映射
+const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
+  'vehicles': { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/30' },
+  'remoteControllers': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' },
+  'motorsESCs': { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/30' },
+  'servos': { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30' },
+  'tiresWheels': { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/30' },
+  'batteries': { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/30' },
+  'chargers': { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/30' },
+  'electronics': { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/30' },
+};
+
+// 搜索引导词
+const searchSuggestions = [
+  { zh: '攀爬车推荐', en: 'RC Crawler Recommend' },
+  { zh: 'Traxxas 新品', en: 'Traxxas New Release' },
+  { zh: '漂移车入门', en: 'RC Drift Beginner' },
+  { zh: '电池保养', en: 'Battery Maintenance' },
+];
 
 export default function Home() {
   const { t, language } = useTranslation();
+  const { trackBrandClick, trackNewsView, trackExternalLink } = useAnalytics();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [currentSuggestion, setCurrentSuggestion] = useState(0);
+
+  // 轮播引导词
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSuggestion((prev) => (prev + 1) % searchSuggestions.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // 统计数据
+  const stats = useMemo(() => {
+    let totalBrands = 0;
+    let domesticBrands = 0;
+    let overseasBrands = 0;
+    
+    categories.forEach(cat => {
+      cat.brands.forEach(brand => {
+        totalBrands++;
+        const isDomestic = brand.country === '中国' || brand.country === '中国台湾' || brand.country === '中国香港';
+        if (isDomestic) domesticBrands++;
+        else overseasBrands++;
+      });
+    });
+    
+    return { totalBrands, domesticBrands, overseasBrands };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* 顶部导航栏 */}
+    <div className="min-h-screen bg-slate-900">
       <Header />
 
-      <main className="container mx-auto px-4 py-8" role="main">
+      <main className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         {/* 英雄区域 */}
-        <section className="text-center mb-8" aria-labelledby="hero-heading">
-          <h2 id="hero-heading" className="text-4xl md:text-5xl font-bold text-white mb-4">
+        <section className="text-center mb-12">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-3">
             {t('home.heroTitle')}
-          </h2>
-          <p className="text-lg text-slate-300 max-w-3xl mx-auto mb-8">
-            {t('home.heroSubtitle')}<br/>
-            {t('home.heroDescription')}
+          </h1>
+          <p className="text-slate-400 max-w-xl mx-auto mb-6">
+            {t('home.heroSubtitle')}
           </p>
-          <div className="flex flex-wrap justify-center gap-6" role="region" aria-label="网站统计数据">
-            <article className="text-center px-6 py-4 bg-slate-800/50 rounded-xl border border-slate-700">
-              <div className="text-3xl font-bold text-orange-400" aria-label="品牌厂商数量">
-                {categories.reduce((sum, cat) => sum + cat.brands.length, 0)}
+          
+          {/* 搜索框 */}
+          <div className="max-w-lg mx-auto mb-6">
+            <div 
+              className="bg-slate-800 border border-slate-700 rounded-xl cursor-pointer hover:border-slate-600 transition-colors"
+              onClick={() => setSearchOpen(true)}
+            >
+              <div className="flex items-center gap-3 px-4 py-3.5">
+                <Search className="w-5 h-5 text-slate-500 shrink-0" />
+                <div className="flex-1 text-left">
+                  <span className="text-slate-400">
+                    {language === 'zh' ? '搜索品牌、资讯...' : 'Search brands, news...'}
+                  </span>
+                </div>
+                <kbd className="hidden md:block text-xs text-slate-500 px-2 py-1 bg-slate-700 rounded">
+                  ⌘K
+                </kbd>
               </div>
-              <div className="text-sm text-slate-400">{t('home.brandCount')}</div>
-            </article>
-            <article className="text-center px-6 py-4 bg-slate-800/50 rounded-xl border border-slate-700">
-              <div className="text-3xl font-bold text-blue-400" aria-label="产品分类数量">{categories.length}</div>
-              <div className="text-sm text-slate-400">{t('home.categoryCount')}</div>
-            </article>
-            <article className="text-center px-6 py-4 bg-slate-800/50 rounded-xl border border-slate-700">
-              <div className="text-3xl font-bold text-pink-400" aria-label="视频博主数量">{vloggers.length}</div>
-              <div className="text-sm text-slate-400">{t('home.vloggerCount')}</div>
-            </article>
+            </div>
+          </div>
+          
+          {/* 统计数据 */}
+          <div className="flex justify-center gap-8 text-sm">
+            <div>
+              <span className="text-2xl font-bold text-white">{stats.totalBrands}+</span>
+              <span className="text-slate-500 ml-1">{language === 'zh' ? '品牌' : 'Brands'}</span>
+            </div>
+            <div>
+              <span className="text-2xl font-bold text-white">{vloggers.length}+</span>
+              <span className="text-slate-500 ml-1">{language === 'zh' ? '博主' : 'Vloggers'}</span>
+            </div>
+            <div>
+              <span className="text-2xl font-bold text-white">50+</span>
+              <span className="text-slate-500 ml-1">{language === 'zh' ? '说明书' : 'Manuals'}</span>
+            </div>
           </div>
         </section>
+        
+        <SearchModal open={searchOpen} onOpenChange={setSearchOpen} />
 
-        {/* 战略合作方 */}
-        <section className="mb-12" aria-labelledby="partners-section">
-          <div className="bg-gradient-to-r from-red-500/10 via-orange-500/10 to-yellow-500/10 border border-red-500/30 rounded-2xl p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shrink-0">
-                  <span className="text-2xl font-bold text-white">{language === 'zh' ? '战略' : 'Partner'}</span>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-1">{t('home.strategicPartner')}</h3>
-                  <p className="text-slate-400 text-sm">{t('home.partnerDesc')}</p>
-                </div>
-              </div>
+        {/* 品牌分类入口 */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <Car className="w-5 h-5 text-slate-400" />
+              {language === 'zh' ? '品牌分类' : 'Brand Categories'}
+            </h2>
+            <Link 
+              href="/brands" 
+              className="text-sm text-orange-400 hover:text-orange-300 flex items-center gap-1"
+            >
+              {language === 'zh' ? '查看全部' : 'View All'}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {categories.map((category) => {
+              const colors = categoryColors[category.id] || categoryColors['vehicles'];
+              // 统计国内/海外品牌数量
+              const domestic = category.brands.filter(b => 
+                b.country === '中国' || b.country === '中国台湾' || b.country === '中国香港'
+              ).length;
+              const overseas = category.brands.length - domestic;
               
-              <div className="flex items-center gap-4">
-                <a 
-                  href="https://mall.jd.com/index-1000003939.html" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-6 py-3 bg-white hover:bg-gray-50 rounded-xl transition-all hover:shadow-lg group"
-                  aria-label="访问京东模型官方旗舰店"
+              return (
+                <Link 
+                  key={category.id} 
+                  href={`/brands?category=${category.id}`}
+                  onClick={() => trackBrandClick(language === 'zh' ? category.title : category.titleEn, category.id)}
                 >
-                  <img 
-                    src="https://www.google.com/s2/favicons?domain=jd.com&sz=128" 
-                    alt="JD Model"
-                    className="w-12 h-12 rounded-lg"
-                  />
-                  <div className="text-left">
-                    <div className="text-lg font-bold text-gray-900 group-hover:text-red-600 transition-colors">
-                      {language === 'zh' ? '京东模型' : 'JD Model'}
-                    </div>
-                    <div className="text-xs text-gray-500">JD Model</div>
-                  </div>
-                </a>
-              </div>
-            </div>
+                  <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors h-full">
+                    <CardContent className="p-4">
+                      <div className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center mb-3`}>
+                        <span className={colors.text}>{iconMap[category.icon]}</span>
+                      </div>
+                      <h3 className="text-white font-medium mb-1">
+                        {language === 'zh' ? category.title : category.titleEn}
+                      </h3>
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <span className="text-orange-400">{domestic}</span>
+                        <span>/</span>
+                        <span className="text-blue-400">{overseas}</span>
+                        <span>{language === 'zh' ? '个品牌' : 'brands'}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
-        {/* 资讯中心入口 */}
-        <section className="mb-12" aria-labelledby="news-section">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                <Newspaper className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-                  {t('home.newsCenter')}
-                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold animate-pulse">
-                    NEW
-                  </Badge>
-                </h3>
-                <p className="text-slate-400 text-sm">{t('home.newsDesc')}</p>
-              </div>
-            </div>
-            <a href="/news">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 gap-2">
-                {t('home.viewMore')}
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </a>
+        {/* 资讯中心 */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <Newspaper className="w-5 h-5 text-slate-400" />
+              {language === 'zh' ? '最新资讯' : 'Latest News'}
+            </h2>
+            <Link 
+              href="/news" 
+              className="text-sm text-orange-400 hover:text-orange-300 flex items-center gap-1"
+            >
+              {language === 'zh' ? '查看全部' : 'View All'}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {getLatestNews().slice(0, 3).map((article) => (
-              <a 
-                key={article.id}
-                href={`/news/${article.id}`}
-                className="group"
-              >
-                <Card className="bg-slate-800/50 border-slate-700 hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-500/10 overflow-hidden h-full">
-                  {/* 封面图 */}
-                  <div className="h-40 relative overflow-hidden">
+              <Link key={article.id} href={`/news/${article.id}`}>
+                <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors overflow-hidden h-full">
+                  <div className="h-36 relative">
                     <img 
                       src={article.coverImage}
                       alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    {/* NEW角标 */}
                     {article.isNew && (
-                      <div className="absolute top-3 left-3">
-                        <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold animate-pulse">
-                          NEW
-                        </Badge>
-                      </div>
-                    )}
-                    {/* 分类 */}
-                    <div className="absolute bottom-3 left-3">
-                      <Badge className="bg-black/60 backdrop-blur-sm text-white text-xs">
-                        {language === 'zh' ? article.category : article.categoryEn}
+                      <Badge className="absolute top-2 right-2 bg-orange-500 text-white text-xs">
+                        NEW
                       </Badge>
-                    </div>
+                    )}
                   </div>
-
                   <CardContent className="p-4">
-                    <h4 className="font-semibold text-white group-hover:text-blue-400 transition-colors mb-2 line-clamp-2">
+                    <h3 className="font-medium text-white mb-2 line-clamp-2 text-sm">
                       {language === 'zh' ? article.title : article.titleEn}
-                    </h4>
-                    <p className="text-slate-400 text-sm mb-3 line-clamp-2">
-                      {language === 'zh' ? article.summary : article.summaryEn}
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          <span>{formatDate(article.publishDate, language)}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          <span>{formatViews(article.views)}</span>
-                        </div>
-                      </div>
+                    </h3>
+                    <div className="flex items-center gap-3 text-xs text-slate-500">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {formatDate(article.publishDate, language)}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Eye className="w-3 h-3" />
+                        {formatViews(article.views)}
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
-              </a>
+              </Link>
             ))}
           </div>
         </section>
 
-        {/* 大尺寸赛事轮播图 - 英雄区域下方 */}
+        {/* 赛事轮播 */}
         <section className="mb-12">
           <EventCarousel />
         </section>
 
-        {/* 分类标签页 */}
-        <section className="mb-12" aria-labelledby="category-section">
-          <h3 id="category-section" className="sr-only">RC模型品牌分类</h3>
-          <Tabs defaultValue="vehicles" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 md:grid-cols-8 gap-2 h-auto bg-slate-800/50 p-2 mb-8" role="tablist" aria-label="产品分类">
-              {categories.map((category) => (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id}
-                  className="flex flex-col items-center gap-1 py-3 text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white"
-                  role="tab"
-                  aria-selected={category.id === 'vehicles'}
-                >
-                  {iconMap[category.icon]}
-                  <span className="text-xs">{language === 'zh' ? category.title : category.titleEn}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {categories.map((category, index) => (
-              <TabsContent key={category.id} value={category.id} role="tabpanel">
-                <CategorySection category={category} categoryIndex={index} language={language} t={t} />
-              </TabsContent>
-            ))}
-          </Tabs>
-        </section>
-
-        {/* 中间横幅广告 */}
+        {/* 博主推荐 */}
         <section className="mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <AdCard 
-              title={language === 'zh' ? 'Hobbywing 电调' : 'Hobbywing ESC'}
-              description={language === 'zh' ? 'EZRUN XERUN系列限时特价' : 'EZRUN XERUN Series Limited Sale'}
-              ctaText={language === 'zh' ? '查看优惠' : 'View Deals'}
-              badge={language === 'zh' ? '热卖' : 'Hot'}
-              variant="highlight"
-            />
-            <AdCard 
-              title={language === 'zh' ? '进口整车专区' : 'Imported Vehicles'}
-              description={language === 'zh' ? 'Traxxas官方授权正品' : 'Traxxas Official Authorized'}
-              ctaText={language === 'zh' ? '进入专区' : 'Enter'}
-              badge={language === 'zh' ? '正品' : 'Auth'}
-              variant="gradient"
-            />
-            <AdCard 
-              title={language === 'zh' ? '新手入门套装' : 'Beginner Kit'}
-              description={language === 'zh' ? 'RTR开箱即玩，一键启动' : 'RTR Ready to Run, One-key Start'}
-              ctaText={language === 'zh' ? '查看推荐' : 'View'}
-              badge={language === 'zh' ? '推荐' : 'Rec'}
-            />
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <Youtube className="w-5 h-5 text-slate-400" />
+              {language === 'zh' ? '博主推荐' : 'RC Vloggers'}
+            </h2>
           </div>
-        </section>
 
-        {/* 视频博主区域 */}
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <Youtube className="w-8 h-8 text-red-500" />
-            <h3 className="text-2xl font-bold text-white">{language === 'zh' ? '国内外视频博主' : 'RC Video Bloggers'}</h3>
-          </div>
-          
           {/* 国内博主 */}
-          <div className="mb-8" role="region" aria-labelledby="domestic-vloggers">
-            <h4 id="domestic-vloggers" className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-red-500 rounded-full" aria-hidden="true"></span>
-              {t('home.domesticVloggers')}
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" role="list" aria-label="国内RC视频博主列表">
-              {vloggers.filter(v => v.country === '中国').map((vlogger) => (
-                <article key={vlogger.name} role="listitem">
-                  <Card className="bg-slate-800/50 border-slate-700 hover:border-pink-500/50 transition-all hover:shadow-lg hover:shadow-pink-500/10 h-full">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start gap-3">
-                      {/* 头像 */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3 text-sm">
+              <span className="text-orange-400">🇨🇳</span>
+              <span className="text-slate-400">{language === 'zh' ? '国内博主' : 'Domestic'}</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {vloggers.filter(v => v.country === '中国').slice(0, 4).map((vlogger) => (
+                <a 
+                  key={vlogger.name}
+                  href={vlogger.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors">
+                    <CardContent className="p-3 flex items-center gap-3">
                       {vlogger.logo ? (
-                        <div className="w-14 h-14 rounded-full overflow-hidden bg-slate-700 shrink-0">
-                          <img 
-                            src={vlogger.logo} 
-                            alt={vlogger.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(vlogger.name) + '&background=f472b6&color=fff&size=128';
-                            }}
-                          />
-                        </div>
+                        <img 
+                          src={vlogger.logo}
+                          alt={vlogger.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shrink-0">
-                          <span className="text-white text-xl font-bold">{vlogger.name.charAt(0)}</span>
+                        <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center">
+                          <span className="text-slate-300 text-sm">{vlogger.name.charAt(0)}</span>
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-white text-lg truncate">{language === 'zh' ? vlogger.name : vlogger.nameEn || vlogger.name}</CardTitle>
-                        <div className="flex items-center gap-2 mt-1">
-                          {vlogger.douyinId && (
-                            <span className="text-xs text-slate-400">@{vlogger.douyinId}</span>
-                          )}
-                          {vlogger.subscribers && (
-                            <Badge variant="outline" className="border-pink-500/30 text-pink-400 text-xs">
-                              {vlogger.subscribers}
-                            </Badge>
-                          )}
+                        <div className="text-white text-sm font-medium truncate">
+                          {language === 'zh' ? vlogger.name : vlogger.nameEn || vlogger.name}
                         </div>
+                        {vlogger.subscribers && (
+                          <div className="text-xs text-slate-500">{vlogger.subscribers}</div>
+                        )}
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-slate-400 mb-4 line-clamp-3 text-sm">
-                      {language === 'zh' ? vlogger.description : vlogger.descriptionEn || vlogger.description}
-                    </CardDescription>
-                    <a href={vlogger.website} target="_blank" rel="noopener noreferrer">
-                      <Button className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600">
-                        <Play className="w-4 h-4 mr-2" fill="white" />
-                        {t('home.followDouyin')}
-                      </Button>
-                    </a>
-                  </CardContent>
-                </Card>
-                </article>
+                    </CardContent>
+                  </Card>
+                </a>
               ))}
             </div>
           </div>
 
-          {/* 国外博主 */}
-          <div role="region" aria-labelledby="overseas-vloggers">
-            <h4 id="overseas-vloggers" className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-purple-500 rounded-full" aria-hidden="true"></span>
-              {t('home.overseasVloggers')}
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" role="list" aria-label="国外RC视频博主列表">
-              {vloggers.filter(v => v.country !== '中国').map((vlogger) => (
-                <article key={vlogger.name} role="listitem">
-                  <Card className="bg-slate-800/50 border-slate-700 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-500/10 h-full">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start gap-3">
-                      {/* 头像 */}
+          {/* 海外博主 */}
+          <div>
+            <div className="flex items-center gap-2 mb-3 text-sm">
+              <span className="text-blue-400">🌍</span>
+              <span className="text-slate-400">{language === 'zh' ? '海外博主' : 'Overseas'}</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {vloggers.filter(v => v.country !== '中国').slice(0, 4).map((vlogger) => (
+                <a 
+                  key={vlogger.name}
+                  href={vlogger.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors">
+                    <CardContent className="p-3 flex items-center gap-3">
                       {vlogger.logo ? (
-                        <div className="w-14 h-14 rounded-full overflow-hidden bg-slate-700 shrink-0">
-                          <img 
-                            src={vlogger.logo} 
-                            alt={vlogger.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(vlogger.name) + '&background=a855f7&color=fff&size=128';
-                            }}
-                          />
-                        </div>
+                        <img 
+                          src={vlogger.logo}
+                          alt={vlogger.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shrink-0">
-                          <span className="text-white text-xl font-bold">{vlogger.name.charAt(0)}</span>
+                        <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center">
+                          <span className="text-slate-300 text-sm">{vlogger.name.charAt(0)}</span>
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-white text-lg truncate">{vlogger.name}</CardTitle>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="border-purple-500/30 text-purple-400 text-xs">
-                            {vlogger.country}
-                          </Badge>
-                          {vlogger.subscribers && (
-                            <span className="text-xs text-slate-400">{vlogger.subscribers}</span>
-                          )}
-                        </div>
+                        <div className="text-white text-sm font-medium truncate">{vlogger.name}</div>
+                        <div className="text-xs text-slate-500">{vlogger.country}</div>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-slate-400 mb-4 line-clamp-3 text-sm">
-                      {language === 'zh' ? vlogger.description : vlogger.descriptionEn || vlogger.description}
-                    </CardDescription>
-                    <a href={vlogger.website} target="_blank" rel="noopener noreferrer">
-                      <Button className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600">
-                        <Play className="w-4 h-4 mr-2" fill="white" />
-                        {t('home.visitChannel')}
-                      </Button>
-                    </a>
-                  </CardContent>
-                </Card>
-                </article>
+                    </CardContent>
+                  </Card>
+                </a>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 底部广告横幅 */}
-        <section className="mb-8">
-          <AdBanner 
-            title={`📢 ${t('home.adSlot')}`}
-            description={t('home.adDesc')}
-            ctaText={t('home.contactUs')}
-            ctaLink="#contact"
-            variant="default"
-          />
-        </section>
-
-        {/* 底部信息 */}
-        <footer className="border-t border-slate-700 pt-8" role="contentinfo">
-          <div className="text-center text-slate-400">
-            <p className="mb-2">{t('home.footerDesc')}</p>
-            <p className="text-sm">
-              {t('home.footerNote')}
-            </p>
-          </div>
+        {/* 底部 */}
+        <footer className="border-t border-slate-800 pt-6 text-center">
+          <p className="text-slate-500 text-sm mb-1">{t('home.footerDesc')}</p>
+          <p className="text-xs text-slate-600">{t('home.footerNote')}</p>
         </footer>
       </main>
-    </div>
-  );
-}
-
-// 分类组件
-function CategorySection({ 
-  category, 
-  categoryIndex, 
-  language,
-  t 
-}: { 
-  category: typeof categories[0]; 
-  categoryIndex: number;
-  language: 'zh' | 'en';
-  t: (key: string) => string;
-}) {
-  // 按国内和海外分类
-  const domesticBrands = category.brands.filter(b => b.country === '中国' || b.country === '中国台湾' || b.country === '中国香港');
-  const overseasBrands = category.brands.filter(b => b.country !== '中国' && b.country !== '中国台湾' && b.country !== '中国香港');
-
-  return (
-    <div className="space-y-8">
-      {/* 国内品牌 */}
-      {domesticBrands.length > 0 && (
-        <BrandSection 
-          title={t('home.domesticBrands')}
-          subtitle={t('home.domesticSubtitle')}
-          brands={domesticBrands}
-          color="orange"
-          showAd={categoryIndex === 0}
-          language={language}
-          t={t}
-        />
-      )}
-      
-      {/* 海外品牌 */}
-      {overseasBrands.length > 0 && (
-        <BrandSection 
-          title={t('home.overseasBrands')}
-          subtitle={t('home.overseasSubtitle')}
-          brands={overseasBrands}
-          color="blue"
-          language={language}
-          t={t}
-        />
-      )}
-    </div>
-  );
-}
-
-// 品牌区域组件
-function BrandSection({ 
-  title, 
-  subtitle, 
-  brands, 
-  color,
-  showAd = false,
-  language,
-  t
-}: { 
-  title: string; 
-  subtitle: string; 
-  brands: Brand[];
-  color: 'orange' | 'blue';
-  showAd?: boolean;
-  language: 'zh' | 'en';
-  t: (key: string) => string;
-}) {
-  const colorClasses = {
-    orange: {
-      badge: 'border-orange-500/30 text-orange-400',
-      button: 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600',
-      dot: 'bg-orange-500',
-      hover: 'hover:border-orange-500/50 hover:shadow-orange-500/10'
-    },
-    blue: {
-      badge: 'border-blue-500/30 text-blue-400',
-      button: 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600',
-      dot: 'bg-blue-500',
-      hover: 'hover:border-blue-500/50 hover:shadow-blue-500/10'
-    }
-  };
-
-  const classes = colorClasses[color];
-
-  return (
-    <div>
-      <h4 className="text-xl font-semibold text-white mb-2 flex items-center gap-2">
-        <span className={`w-2 h-2 ${classes.dot} rounded-full`}></span>
-        {title}
-        {subtitle && <span className="text-sm font-normal text-slate-400 ml-2">{subtitle}</span>}
-      </h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {brands.map((brand, index) => (
-          <React.Fragment key={brand.name}>
-            {/* 在第3个品牌后插入广告 */}
-            {showAd && index === 2 && (
-              <AdInline 
-                title={language === 'zh' ? '🎯 精选配件推荐' : '🎯 Recommended Accessories'}
-                description={language === 'zh' ? '搭配整车更优惠 | 电机电调套装限时折扣' : 'Bundle deals | Motor & ESC kit discounts'}
-                ctaText={language === 'zh' ? '查看搭配' : 'View'}
-                ctaLink="#accessories"
-              />
-            )}
-            <Card 
-              className={`bg-slate-800/50 border-slate-700 transition-all hover:shadow-lg ${classes.hover}`}
-            >
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {/* 品牌Logo */}
-                    {brand.logo && (
-                      <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-                        <img 
-                          src={brand.logo} 
-                          alt={brand.name}
-                          className="w-10 h-10 object-contain"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <CardTitle className="text-white text-lg">{language === 'zh' ? brand.name : brand.nameEn || brand.name}</CardTitle>
-                      {brand.nameEn && language === 'zh' && (
-                        <div className="text-sm text-slate-500">{brand.nameEn}</div>
-                      )}
-                    </div>
-                  </div>
-                  <Badge variant="outline" className={classes.badge}>
-                    {brand.country}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-slate-400 mb-3 line-clamp-2">
-                  {language === 'zh' ? brand.description : brand.descriptionEn || brand.description}
-                </CardDescription>
-                
-                {/* 代表型号 */}
-                {brand.models && brand.models.length > 0 && (
-                  <div className="mb-3">
-                    <div className="text-xs text-slate-500 mb-1">{t('home.hotSeries')}</div>
-                    <div className="flex flex-wrap gap-1">
-                      {brand.models.map((model) => (
-                        <Badge key={model} variant="secondary" className="text-xs bg-slate-700 text-slate-300">
-                          {model}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* 详细信息 */}
-                <div className="space-y-2 mb-3">
-                  {brand.priceRange && (
-                    <div className="flex items-start gap-2 text-xs">
-                      <DollarSign className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
-                      <span className="text-slate-300">{brand.priceRange}</span>
-                    </div>
-                  )}
-                  {brand.purchaseChannels && (
-                    <div className="flex items-start gap-2 text-xs">
-                      <ShoppingCart className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                      <span className="text-slate-300">{brand.purchaseChannels}</span>
-                    </div>
-                  )}
-                  {brand.suitableFor && (
-                    <div className="flex items-start gap-2 text-xs">
-                      <Users className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                      <span className="text-slate-300">{t('home.suitableFor')}：{brand.suitableFor}</span>
-                    </div>
-                  )}
-                </div>
-                
-                {/* 亮点 */}
-                {brand.highlight && (
-                  <div className="mb-3 p-2 bg-slate-700/50 rounded text-xs text-slate-300">
-                    💡 {language === 'zh' ? brand.highlight : brand.highlightEn || brand.highlight}
-                  </div>
-                )}
-                
-                <a href={brand.website} target="_blank" rel="noopener noreferrer">
-                  <Button className={`w-full ${classes.button}`}>
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    {t('home.visitOfficial')}
-                  </Button>
-                </a>
-              </CardContent>
-            </Card>
-          </React.Fragment>
-        ))}
-      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,9 @@ import {
   Video, 
   Search, 
   TrendingUp,
-  X,
-  Clock
+  Clock,
+  ExternalLink,
+  ArrowRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -34,9 +35,9 @@ const typeIcons = {
 
 // 类型颜色映射
 const typeColors = {
-  brand: 'text-blue-500',
-  news: 'text-green-500',
-  vlogger: 'text-purple-500'
+  brand: 'text-slate-400',
+  news: 'text-slate-400',
+  vlogger: 'text-slate-400'
 };
 
 // 类型标签映射
@@ -44,6 +45,14 @@ const typeLabels = {
   brand: { zh: '品牌', en: 'Brand' },
   news: { zh: '资讯', en: 'News' },
   vlogger: { zh: '博主', en: 'Vlogger' }
+};
+
+// 默认搜索引擎 - 百度
+const getDefaultSearchEngine = (query: string, language: 'zh' | 'en') => {
+  const searchTerm = language === 'zh' 
+    ? `${query} RC 遥控车 模型`
+    : `${query} RC car model`;
+  return `https://www.baidu.com/s?wd=${encodeURIComponent(searchTerm)}`;
 };
 
 export function SearchModal({ open, onOpenChange }: SearchModalProps) {
@@ -77,7 +86,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     localStorage.setItem('recentSearches', JSON.stringify(updated));
   }, [recentSearches]);
   
-  // 执行搜索
+  // 执行站内搜索
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
@@ -87,7 +96,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     const timer = setTimeout(() => {
       const searchResults = search(query);
       setResults(searchResults);
-    }, 300); // 防抖300ms
+    }, 300);
     
     return () => clearTimeout(timer);
   }, [query]);
@@ -98,7 +107,10 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     return results.filter(item => item.type === activeType);
   }, [results, activeType]);
   
-  // 点击结果
+  // 热门关键词
+  const hotKeywords = useMemo(() => getHotKeywords(), []);
+  
+  // 点击站内结果
   const handleResultClick = (result: SearchResult) => {
     saveRecentSearch(query);
     onOpenChange(false);
@@ -110,6 +122,15 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     setQuery(keyword);
   };
   
+  // 执行全网搜索（默认百度）
+  const handleWebSearch = () => {
+    if (!query.trim()) return;
+    saveRecentSearch(query);
+    const url = getDefaultSearchEngine(query, language);
+    window.open(url, '_blank');
+    onOpenChange(false);
+  };
+  
   // 清空历史
   const clearHistory = () => {
     setRecentSearches([]);
@@ -119,20 +140,22 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   // 快捷键
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + K 打开搜索
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         onOpenChange(!open);
       }
-      // ESC 关闭
       if (e.key === 'Escape' && open) {
         onOpenChange(false);
+      }
+      // Enter 键执行全网搜索
+      if (e.key === 'Enter' && open && query.trim()) {
+        handleWebSearch();
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, onOpenChange]);
+  }, [open, onOpenChange, query]);
   
   // 打开时清空查询
   useEffect(() => {
@@ -146,6 +169,14 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 gap-0 bg-slate-900 border-slate-800">
+        {/* 无障碍访问：隐藏的标题和描述 */}
+        <DialogTitle className="sr-only">
+          {language === 'zh' ? '搜索' : 'Search'}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          {language === 'zh' ? '搜索品牌、资讯、博主等内容' : 'Search brands, news, vloggers and more'}
+        </DialogDescription>
+        
         {/* 搜索输入框 */}
         <div className="flex items-center gap-3 p-4 border-b border-slate-800">
           <Search className="w-5 h-5 text-slate-400" />
@@ -156,120 +187,154 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
             className="border-0 bg-transparent focus-visible:ring-0 text-white placeholder:text-slate-500"
             autoFocus
           />
-          <kbd className="px-2 py-1 text-xs bg-slate-800 text-slate-400 rounded border border-slate-700">
+          {query.trim() && (
+            <Button
+              size="sm"
+              onClick={handleWebSearch}
+              className="bg-orange-500 hover:bg-orange-600 text-white gap-1"
+            >
+              {language === 'zh' ? '搜索' : 'Search'}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          )}
+          <kbd className="hidden md:flex px-2 py-1 text-xs bg-slate-800 text-slate-400 rounded border border-slate-700">
             ESC
           </kbd>
         </div>
         
-        {/* 类型过滤 */}
-        {query && results.length > 0 && (
-          <div className="flex gap-2 p-3 border-b border-slate-800">
-            <Button
-              size="sm"
-              variant={activeType === 'all' ? 'default' : 'ghost'}
-              onClick={() => setActiveType('all')}
-              className={cn(
-                'h-8',
-                activeType === 'all' 
-                  ? 'bg-orange-500 text-white hover:bg-orange-600' 
-                  : 'text-slate-400 hover:text-white'
-              )}
-            >
-              {language === 'zh' ? '全部' : 'All'}
-            </Button>
-            {(['brand', 'news', 'vlogger'] as const).map(type => {
-              const count = results.filter(r => r.type === type).length;
-              if (count === 0) return null;
-              
-              return (
-                <Button
-                  key={type}
-                  size="sm"
-                  variant={activeType === type ? 'default' : 'ghost'}
-                  onClick={() => setActiveType(type)}
-                  className={cn(
-                    'h-8',
-                    activeType === type 
-                      ? 'bg-orange-500 text-white hover:bg-orange-600' 
-                      : 'text-slate-400 hover:text-white'
-                  )}
-                >
-                  {typeLabels[type][language]} ({count})
-                </Button>
-              );
-            })}
-          </div>
-        )}
-        
         {/* 内容区域 */}
         <ScrollArea className="max-h-[500px]">
-          {/* 搜索结果 */}
-          {query && filteredResults.length > 0 && (
-            <div className="p-2">
-              {filteredResults.map((result, index) => {
-                const Icon = typeIcons[result.type];
-                const iconColor = typeColors[result.type];
-                
-                return (
-                  <button
-                    key={`${result.type}-${result.id}`}
-                    onClick={() => handleResultClick(result)}
-                    className="w-full flex items-start gap-3 p-3 rounded-lg hover:bg-slate-800 transition-colors text-left"
-                  >
-                    {/* 图标 */}
-                    <div className={cn('mt-1', iconColor)}>
-                      <Icon className="w-5 h-5" />
+          {/* 有搜索词时显示 */}
+          {query.trim() && (
+            <>
+              {/* 全网搜索入口 - 默认推荐 */}
+              <div className="p-4 border-b border-slate-800">
+                <button
+                  onClick={handleWebSearch}
+                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-colors text-left border border-slate-700 hover:border-slate-600 group"
+                >
+                  <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                    <Search className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-white">
+                        {language === 'zh' ? '在百度搜索' : 'Search on Baidu'}
+                      </span>
+                      <Badge className="bg-orange-500 text-white text-xs">
+                        {language === 'zh' ? '推荐' : 'Recommended'}
+                      </Badge>
                     </div>
-                    
-                    {/* 内容 */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-medium text-white truncate">
-                          {language === 'zh' ? result.title : result.titleEn}
-                        </h3>
-                        <Badge 
-                          variant="outline" 
-                          className="text-xs bg-slate-800 border-slate-700 text-slate-400"
-                        >
-                          {typeLabels[result.type][language]}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-slate-400 line-clamp-2">
-                        {language === 'zh' ? result.description : result.descriptionEn}
-                      </p>
-                      {result.category && (
-                        <p className="text-xs text-slate-500 mt-1">
-                          {language === 'zh' ? result.category : result.categoryEn}
-                        </p>
-                      )}
-                    </div>
-                    
-                    {/* 图片 */}
-                    {result.image && (
-                      <img 
-                        src={result.image} 
-                        alt={result.title}
-                        className="w-12 h-12 rounded object-cover bg-slate-800"
-                      />
+                    <p className="text-sm text-slate-400 mt-0.5">
+                      "{query}" {language === 'zh' ? 'RC 遥控车 模型' : 'RC car model'}
+                    </p>
+                  </div>
+                  <ExternalLink className="w-5 h-5 text-slate-500 group-hover:text-orange-400 transition-colors" />
+                </button>
+              </div>
+              
+              {/* 类型过滤 */}
+              {results.length > 0 && (
+                <div className="flex gap-2 p-3 border-b border-slate-800">
+                  <Button
+                    size="sm"
+                    variant={activeType === 'all' ? 'default' : 'ghost'}
+                    onClick={() => setActiveType('all')}
+                    className={cn(
+                      'h-8',
+                      activeType === 'all' 
+                        ? 'bg-slate-700 text-white hover:bg-slate-600' 
+                        : 'text-slate-400 hover:text-white'
                     )}
-                  </button>
-                );
-              })}
-            </div>
+                  >
+                    {language === 'zh' ? '全部' : 'All'}
+                  </Button>
+                  {(['brand', 'news', 'vlogger'] as const).map(type => {
+                    const count = results.filter(r => r.type === type).length;
+                    if (count === 0) return null;
+                    
+                    return (
+                      <Button
+                        key={type}
+                        size="sm"
+                        variant={activeType === type ? 'default' : 'ghost'}
+                        onClick={() => setActiveType(type)}
+                        className={cn(
+                          'h-8',
+                          activeType === type 
+                            ? 'bg-slate-700 text-white hover:bg-slate-600' 
+                            : 'text-slate-400 hover:text-white'
+                        )}
+                      >
+                        {typeLabels[type][language]} ({count})
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {/* 站内搜索结果 */}
+              {filteredResults.length > 0 && (
+                <div className="p-2">
+                  <div className="px-3 py-2 text-xs text-slate-500 uppercase tracking-wide">
+                    {language === 'zh' ? '站内结果' : 'Internal Results'}
+                  </div>
+                  {filteredResults.map((result) => {
+                    const Icon = typeIcons[result.type];
+                    const iconColor = typeColors[result.type];
+                    
+                    return (
+                      <button
+                        key={`${result.type}-${result.id}`}
+                        onClick={() => handleResultClick(result)}
+                        className="w-full flex items-start gap-3 p-3 rounded-lg hover:bg-slate-800 transition-colors text-left"
+                      >
+                        <div className={cn('mt-0.5', iconColor)}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-medium text-white truncate">
+                              {language === 'zh' ? result.title : result.titleEn}
+                            </h3>
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs bg-slate-800 border-slate-700 text-slate-400"
+                            >
+                              {typeLabels[result.type][language]}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-slate-500 line-clamp-1">
+                            {language === 'zh' ? result.description : result.descriptionEn}
+                          </p>
+                        </div>
+                        
+                        {result.image && (
+                          <img 
+                            src={result.image} 
+                            alt={result.title}
+                            className="w-10 h-10 rounded object-cover bg-slate-800"
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {/* 无站内结果 */}
+              {filteredResults.length === 0 && (
+                <div className="p-6 text-center">
+                  <p className="text-slate-500 text-sm">
+                    {language === 'zh' ? '站内暂无相关内容，试试全网搜索' : 'No internal results, try web search'}
+                  </p>
+                </div>
+              )}
+            </>
           )}
           
-          {/* 无结果 */}
-          {query && filteredResults.length === 0 && (
-            <div className="p-8 text-center text-slate-400">
-              <Search className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p>{language === 'zh' ? '未找到相关结果' : 'No results found'}</p>
-              <p className="text-sm mt-1">
-                {language === 'zh' ? '试试其他关键词' : 'Try different keywords'}
-              </p>
-            </div>
-          )}
-          
-          {/* 默认内容：历史记录 + 热门搜索 */}
+          {/* 无搜索词时显示 */}
           {!query && (
             <div className="p-4 space-y-4">
               {/* 最近搜索 */}
@@ -309,7 +374,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                   {language === 'zh' ? '热门搜索' : 'Trending'}
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {getHotKeywords().map((keyword, i) => (
+                  {hotKeywords.slice(0, 8).map((keyword, i) => (
                     <Badge
                       key={i}
                       variant="secondary"
@@ -322,18 +387,12 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                 </div>
               </div>
               
-              {/* 快捷键提示 */}
-              <div className="pt-4 border-t border-slate-800">
+              {/* 快捷提示 */}
+              <div className="pt-2 border-t border-slate-800">
                 <p className="text-xs text-slate-500 text-center">
-                  {language === 'zh' ? (
-                    <>
-                      按 <kbd className="px-1.5 py-0.5 bg-slate-800 rounded text-slate-400">⌘K</kbd> 快速搜索
-                    </>
-                  ) : (
-                    <>
-                      Press <kbd className="px-1.5 py-0.5 bg-slate-800 rounded text-slate-400">⌘K</kbd> to search
-                    </>
-                  )}
+                  {language === 'zh' 
+                    ? '💡 输入关键词后按 Enter 键或点击搜索按钮进行全网搜索'
+                    : '💡 Press Enter or click Search to search the web'}
                 </p>
               </div>
             </div>

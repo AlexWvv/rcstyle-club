@@ -132,21 +132,21 @@ export function AdCard({
   className = ''
 }: AdSlotProps) {
   const variants = {
-    default: 'bg-slate-800/50 border-slate-700 hover:border-slate-600',
-    highlight: 'bg-orange-500/5 border-orange-500/30 hover:border-orange-500/50',
-    gradient: 'bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:border-purple-500/50'
+    default: 'bg-slate-800/60 border-slate-700 hover:border-slate-600',
+    highlight: 'bg-gradient-to-br from-orange-500/10 to-red-500/10 border-orange-500/30 hover:border-orange-500/50',
+    gradient: 'bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-blue-500/30 hover:border-blue-500/50'
   };
 
   return (
-    <Card className={`${variants[variant]} transition-all ${className}`}>
-      <CardContent className="p-5">
+    <Card className={`${variants[variant]} transition-all rounded-xl ${className}`}>
+      <CardContent className="p-4">
         <div className="flex items-start gap-3 mb-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center shrink-0">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h4 className="font-semibold text-white">{title}</h4>
+              <h4 className="font-semibold text-white text-sm">{title}</h4>
               {badge && (
                 <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-400">
                   {badge}

@@ -135,3 +135,101 @@
 body {
   @apply font-sans;
 }
+
+/* 针对25-45岁人群的阅读优化 */
+/* 基础字体和行高优化 - 提升阅读舒适度 */
+html {
+  font-size: 15px; /* 基础字号适中 */
+  scroll-behavior: smooth;
+}
+
+body {
+  line-height: 1.7; /* 舒适的行高 */
+  letter-spacing: 0.01em; /* 轻微字间距 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 标题层级优化 - 清晰的视觉层次 */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* 段落优化 */
+p {
+  line-height: 1.75;
+  margin-bottom: 1em;
+}
+
+/* 链接优化 - 更明显的交互反馈 */
+a {
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+/* 按钮优化 - 更大的点击区域和清晰的反馈 */
+button, .btn, [role="button"] {
+  min-height: 40px;
+  transition: all 0.2s ease;
+}
+
+/* 卡片内容优化 */
+.card-content p,
+.card-description {
+  line-height: 1.7;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+  
+  body {
+    line-height: 1.65;
+  }
+}
+
+/* 减少动效 - 更专业的观感 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 阅读进度指示 */
+::selection {
+  background-color: rgba(251, 146, 60, 0.3); /* 橙色选中效果 */
+  color: inherit;
+}
+
+/* 滚动条优化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Focus 状态优化 - 更清晰的焦点指示 */
+:focus-visible {
+  outline: 2px solid rgba(251, 146, 60, 0.6);
+  outline-offset: 2px;
+}

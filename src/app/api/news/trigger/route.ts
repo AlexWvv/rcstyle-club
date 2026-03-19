@@ -1,11 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SearchClient, LLMClient, Config, HeaderUtils } from 'coze-coding-dev-sdk';
 
+// 获取基础 URL
+function getBaseUrl(request: NextRequest): string {
+  // 优先使用环境变量
+  const domain = process.env.COZE_PROJECT_DOMAIN_DEFAULT;
+  if (domain) {
+    // 环境变量已包含 https:// 前缀
+    if (domain.startsWith('http://') || domain.startsWith('https://')) {
+      return domain;
+    }
+    return `https://${domain}`;
+  }
+  // 其次从请求头获取
+  const host = request.headers.get('host');
+  const protocol = request.headers.get('x-forwarded-proto') || 'https';
+  if (host) {
+    return `${protocol}://${host}`;
+  }
+  // 开发环境默认
+  return 'http://localhost:5000';
+}
+
 // 自动更新资讯（定时任务触发）
 export async function POST(request: NextRequest) {
   try {
     const customHeaders = HeaderUtils.extractForwardHeaders(request.headers);
     const config = new Config();
+    const baseUrl = getBaseUrl(request);
     
     // 验证触发密钥（可选，用于安全验证）
     const authHeader = request.headers.get('authorization');
@@ -19,8 +41,8 @@ export async function POST(request: NextRequest) {
     }
     
     // 调用抓取API
-    const fetchUrl = new URL('/api/news/fetch', request.url);
-    const fetchResponse = await fetch(fetchUrl.toString(), {
+    const fetchUrl = `${baseUrl}/api/news/fetch`;
+    const fetchResponse = await fetch(fetchUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -39,8 +61,8 @@ export async function POST(request: NextRequest) {
     }
     
     // 保存新资讯
-    const saveUrl = new URL('/api/news/auto-update', request.url);
-    const saveResponse = await fetch(saveUrl.toString(), {
+    const saveUrl = `${baseUrl}/api/news/auto-update`;
+    const saveResponse = await fetch(saveUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

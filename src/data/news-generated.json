@@ -1,0 +1,14 @@
+[
+  {
+    "id": "test-1",
+    "title": "测试文章",
+    "titleEn": "Test Article",
+    "category": "行业动态",
+    "categoryEn": "Industry News",
+    "summary": "这是测试摘要",
+    "summaryEn": "Test summary",
+    "coverImage": "https://example.com/image.jpg",
+    "publishDate": "2024-01-01",
+    "views": 100
+  }
+]
